@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل الطلاب - منصة مادة العلوم</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Noto Naskh Arabic', serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f0e6d2, #e2cda8, #d4b98a);
+            background-attachment: fixed;
+            color: #333;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23a86a46' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+            opacity: 0.15;
+            z-index: 0;
+        }
+
+        .header {
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(166, 106, 70, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid #a86a46;
+            position: relative;
+            z-index: 2;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            animation: fadeIn 1.5s ease-out;
+        }
+
+        .logo {
+            width: 70px;
+            height: 70px;
+            background: #f5e9d8;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 20px rgba(168, 106, 70, 0.3);
+            overflow: hidden;
+            border: 3px solid #a86a46;
+        }
+
+        .logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .platform-name {
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: #f5e9d8;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            position: relative;
+            padding-bottom: 8px;
+        }
+
+        .platform-name::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(to right, transparent, #f5e9d8, transparent);
+            border-radius: 50%;
+        }
+
+        .main-content {
+            padding: 30px 15px;
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            margin: 0 auto;
+            min-height: calc(100vh - 170px);
+        }
+
+        .form-container {
+            background: rgba(255, 248, 231, 0.85);
+            backdrop-filter: blur(5px);
+            border-radius: 15px;
+            padding: 30px;
+            border: 1px solid rgba(168, 106, 70, 0.2);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            text-align: right;
+        }
+
+        .form-title {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #a86a46;
+            margin-bottom: 30px;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            position: relative;
+            padding-bottom: 15px;
+        }
+
+        .form-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 50%;
+            transform: translateX(50%);
+            width: 200px;
+            height: 3px;
+            background: linear-gradient(to right, transparent, #a86a46, transparent);
+            border-radius: 50%;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+            color: #3a1c00;
+            font-weight: 600;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.6rem;
+            border-radius: 10px;
+            border: 2px solid #d4b98a;
+            background: #fff;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #a86a46;
+            box-shadow: 0 0 0 3px rgba(168, 106, 70, 0.2);
+        }
+
+        .form-input.invalid {
+            border-color: #e74c3c;
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.6rem;
+            border-radius: 10px;
+            border: 2px solid #d4b98a;
+            background: #fff;
+            cursor: pointer;
+        }
+
+        .form-select:focus {
+            outline: none;
+            border-color: #a86a46;
+            box-shadow: 0 0 0 3px rgba(168, 106, 70, 0.2);
+        }
+
+        .error-message {
+            color: #e74c3c;
+            font-size: 1.4rem;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 18px;
+            font-size: 1.8rem;
+            font-weight: 700;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            background: linear-gradient(45deg, #a86a46, #d4b98a, #a86a46);
+            color: #fff;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            margin-top: 20px;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-submit:active {
+            transform: translateY(0);
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 25px;
+            font-size: 1.6rem;
+        }
+
+        .login-link a {
+            color: #a86a46;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+
+        .footer {
+            background: rgba(166, 106, 70, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 20px 15px;
+            text-align: center;
+            border-top: 2px solid #a86a46;
+            position: relative;
+            z-index: 2;
+        }
+
+        .creator-info {
+            font-size: 1.2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .creator-name {
+            font-weight: 700;
+            color: #f5e9d8;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .phone-number {
+            display: block;
+            font-size: 1.1rem;
+            color: #f5e9d8;
+        }
+
+        .decoration {
+            position: absolute;
+            z-index: 0;
+            opacity: 0.15;
+        }
+
+        .atom {
+            top: 10%;
+            right: 5%;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 2px dashed #a86a46;
+            animation: rotate 40s linear infinite;
+        }
+
+        .molecule {
+            bottom: 15%;
+            left: 5%;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 2px dashed #a86a46;
+            animation: rotate 30s linear infinite reverse;
+        }
+
+        .flask {
+            top: 35%;
+            left: 10%;
+            width: 80px;
+            height: 160px;
+            border-bottom-left-radius: 50%;
+            border-bottom-right-radius: 50%;
+            border: 2px dashed #a86a46;
+            animation: float 9s ease-in-out infinite;
+        }
+
+        .book {
+            bottom: 10%;
+            right: 10%;
+            width: 100px;
+            height: 140px;
+            background: rgba(168, 106, 70, 0.1);
+            border-radius: 8px;
+            border: 2px dashed #a86a46;
+            animation: float 7s ease-in-out infinite 0.5s;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* تحسينات للهواتف - شاشات صغيرة جداً */
+        @media (max-width: 480px) {
+            .header {
+                padding: 12px 15px;
+            }
+            
+            .logo {
+                width: 60px;
+                height: 60px;
+            }
+            
+            .platform-name {
+                font-size: 1.5rem;
+                padding-bottom: 6px;
+            }
+            
+            .form-title {
+                font-size: 2rem;
+            }
+            
+            .form-label {
+                font-size: 1.6rem;
+            }
+            
+            .form-input, .form-select {
+                font-size: 1.5rem;
+                padding: 12px;
+            }
+            
+            .btn-submit {
+                font-size: 1.6rem;
+                padding: 15px;
+            }
+            
+            .login-link {
+                font-size: 1.5rem;
+            }
+            
+            .creator-info {
+                font-size: 1.1rem;
+            }
+            
+            .phone-number {
+                font-size: 1rem;
+            }
+            
+            .atom, .molecule, .flask, .book {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo-container">
+            <div class="logo">
+                <img src="islam.jpg" alt="شعار منصة مادة العلوم">
+            </div>
+            <h1 class="platform-name">تسجيل الطلاب</h1>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="decoration atom"></div>
+        <div class="decoration molecule"></div>
+        <div class="decoration flask"></div>
+        <div class="decoration book"></div>
+        
+        <div class="form-container">
+            <h2 class="form-title">إنشاء حساب جديد</h2>
+            
+            <form id="registrationForm">
+                <div class="form-group">
+                    <label for="fullName" class="form-label">الاسم بالكامل (بالعربية فقط)</label>
+                    <input type="text" id="fullName" class="form-input" required>
+                    <div class="error-message" id="nameError">الرجاء إدخال الاسم باللغة العربية فقط</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="phone" class="form-label">رقم الهاتف (يبدأ بـ 01)</label>
+                    <input type="tel" id="phone" class="form-input" required>
+                    <div class="error-message" id="phoneError">الرجاء إدخال رقم هاتف صحيح (11 رقمًا ويبدأ بـ 01)</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password" class="form-label">كلمة المرور (8 أرقام إنجليزية)</label>
+                    <input type="password" id="password" class="form-input" required>
+                    <div class="error-message" id="passwordError">كلمة المرور يجب أن تكون 8 أرقام إنجليزية فقط</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="confirmPassword" class="form-label">تأكيد كلمة المرور</label>
+                    <input type="password" id="confirmPassword" class="form-input" required>
+                    <div class="error-message" id="confirmError">كلمة المرور غير متطابقة</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="governorate" class="form-label">المحافظة</label>
+                    <select id="governorate" class="form-select" required>
+                        <option value="">اختر المحافظة</option>
+                        <option value="القاهرة">القاهرة</option>
+                        <option value="الجيزة">الجيزة</option>
+                        <option value="الإسكندرية">الإسكندرية</option>
+                        <option value="الدقهلية">الدقهلية</option>
+                        <option value="البحر الأحمر">البحر الأحمر</option>
+                        <option value="البحيرة">البحيرة</option>
+                        <option value="الفيوم">الفيوم</option>
+                        <option value="الغربية">الغربية</option>
+                        <option value="الإسماعيلية">الإسماعيلية</option>
+                        <option value="المنوفية">المنوفية</option>
+                        <option value="المنيا">المنيا</option>
+                        <option value="القليوبية">القليوبية</option>
+                        <option value="الوادي الجديد">الوادي الجديد</option>
+                        <option value="السويس">السويس</option>
+                        <option value="أسوان">أسوان</option>
+                        <option value="أسيوط">أسيوط</option>
+                        <option value="بني سويف">بني سويف</option>
+                        <option value="بورسعيد">بورسعيد</option>
+                        <option value="دمياط">دمياط</option>
+                        <option value="سوهاج">سوهاج</option>
+                        <option value="جنوب سيناء">جنوب سيناء</option>
+                        <option value="كفر الشيخ">كفر الشيخ</option>
+                        <option value="مطروح">مطروح</option>
+                        <option value="الأقصر">الأقصر</option>
+                        <option value="قنا">قنا</option>
+                        <option value="شمال سيناء">شمال سيناء</option>
+                        <option value="السادس من أكتوبر">السادس من أكتوبر</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="grade" class="form-label">الصف الدراسي</label>
+                    <select id="grade" class="form-select" required>
+                        <option value="">اختر الصف الدراسي</option>
+                        <option value="الرابع الابتدائي">الرابع الابتدائي</option>
+                        <option value="الخامس الابتدائي">الخامس الابتدائي</option>
+                        <option value="السادس الابتدائي">السادس الابتدائي</option>
+                        <option value="الأول الإعدادي">الأول الإعدادي</option>
+                        <option value="الثاني الإعدادي">الثاني الإعدادي</option>
+                        <option value="الثالث الإعدادي">الثالث الإعدادي</option>
+                    </select>
+                </div>
+                
+                <button type="submit" class="btn-submit">إنشاء الحساب</button>
+            </form>
+            
+            <div class="login-link">
+                لديك حساب بالفعل؟ <a href="login.html">تسجيل الدخول</a>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="creator-info">
+            <span class="creator-name">م/ اسماعيل عماد</span>
+            <span class="phone-number">01122104596</span>
+            <span class="phone-number">01202326992</span>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyB27lyphN9YxgB4eFwuKWi0ghjuAutpu8o",
+            authDomain: "manssa-oloom1352007.firebaseapp.com",
+            projectId: "manssa-oloom1352007",
+            storageBucket: "manssa-oloom1352007.appspot.com",
+            messagingSenderId: "191595591961",
+            appId: "1:191595591961:web:79ff9bbb52cc08cb862d88",
+            measurementId: "G-B57GFGNW3B"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // عناصر النموذج
+        const form = document.getElementById('registrationForm');
+        const fullNameInput = document.getElementById('fullName');
+        const phoneInput = document.getElementById('phone');
+        const passwordInput = document.getElementById('password');
+        const confirmPasswordInput = document.getElementById('confirmPassword');
+        const governorateSelect = document.getElementById('governorate');
+        const gradeSelect = document.getElementById('grade');
+
+        // عناصر رسائل الخطأ
+        const nameError = document.getElementById('nameError');
+        const phoneError = document.getElementById('phoneError');
+        const passwordError = document.getElementById('passwordError');
+        const confirmError = document.getElementById('confirmError');
+
+        // تعبيرات منتظمة للتحقق من صحة البيانات
+        const arabicRegex = /^[\u0600-\u06FF\s]+$/;
+        const phoneRegex = /^01[0-9]{9}$/;
+        const passwordRegex = /^[0-9]{8}$/;
+
+        // التحقق من صحة الاسم
+        fullNameInput.addEventListener('input', function() {
+            if (!arabicRegex.test(this.value)) {
+                this.classList.add('invalid');
+                nameError.style.display = 'block';
+            } else {
+                this.classList.remove('invalid');
+                nameError.style.display = 'none';
+            }
+        });
+
+        // التحقق من صحة رقم الهاتف
+        phoneInput.addEventListener('input', function() {
+            if (!phoneRegex.test(this.value)) {
+                this.classList.add('invalid');
+                phoneError.style.display = 'block';
+            } else {
+                this.classList.remove('invalid');
+                phoneError.style.display = 'none';
+            }
+        });
+
+        // التحقق من صحة كلمة المرور
+        passwordInput.addEventListener('input', function() {
+            if (!passwordRegex.test(this.value)) {
+                this.classList.add('invalid');
+                passwordError.style.display = 'block';
+            } else {
+                this.classList.remove('invalid');
+                passwordError.style.display = 'none';
+            }
+            
+            // التحقق من تطابق كلمة المرور
+            checkPasswordMatch();
+        });
+
+        // التحقق من تطابق كلمة المرور
+        confirmPasswordInput.addEventListener('input', checkPasswordMatch);
+
+        function checkPasswordMatch() {
+            if (passwordInput.value !== confirmPasswordInput.value) {
+                confirmPasswordInput.classList.add('invalid');
+                confirmError.style.display = 'block';
+            } else {
+                confirmPasswordInput.classList.remove('invalid');
+                confirmError.style.display = 'none';
+            }
+        }
+
+        // إرسال النموذج
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // التحقق من صحة جميع الحقول
+            let isValid = true;
+            
+            if (!arabicRegex.test(fullNameInput.value)) {
+                fullNameInput.classList.add('invalid');
+                nameError.style.display = 'block';
+                isValid = false;
+            }
+            
+            if (!phoneRegex.test(phoneInput.value)) {
+                phoneInput.classList.add('invalid');
+                phoneError.style.display = 'block';
+                isValid = false;
+            }
+            
+            if (!passwordRegex.test(passwordInput.value)) {
+                passwordInput.classList.add('invalid');
+                passwordError.style.display = 'block';
+                isValid = false;
+            }
+            
+            if (passwordInput.value !== confirmPasswordInput.value) {
+                confirmPasswordInput.classList.add('invalid');
+                confirmError.style.display = 'block';
+                isValid = false;
+            }
+            
+            if (!governorateSelect.value) {
+                governorateSelect.classList.add('invalid');
+                isValid = false;
+            }
+            
+            if (!gradeSelect.value) {
+                gradeSelect.classList.add('invalid');
+                isValid = false;
+            }
+            
+            if (!isValid) {
+                return;
+            }
+            
+            // التحقق من وجود حساب سابق
+            try {
+                const querySnapshot = await db.collection('students')
+                    .where('phone', '==', phoneInput.value)
+                    .get();
+                
+                if (!querySnapshot.empty) {
+                    // يوجد حساب سابق
+                    alert('هذا الرقم مسجل بالفعل. الرجاء تسجيل الدخول.');
+                    window.location.href = 'login.html';
+                    return;
+                }
+                
+                // إنشاء حساب جديد
+                await db.collection('students').add({
+                    fullName: fullNameInput.value,
+                    phone: phoneInput.value,
+                    password: passwordInput.value,
+                    governorate: governorateSelect.value,
+                    grade: gradeSelect.value,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                // توجيه المستخدم إلى صفحة الدفع
+                window.location.href = 'payment.html';
+                
+            } catch (error) {
+                console.error('حدث خطأ أثناء تسجيل المستخدم:', error);
+                alert('حدث خطأ أثناء تسجيل الحساب. الرجاء المحاولة مرة أخرى.');
+            }
+        });
+    </script>
+</body>
+</html>

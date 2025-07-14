@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>معلومات عن المنصة - منصة مادة العلوم</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Noto Naskh Arabic', serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f0e6d2, #e2cda8, #d4b98a);
+            background-attachment: fixed;
+            color: #333;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23a86a46' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+            opacity: 0.15;
+            z-index: 0;
+        }
+
+        .header {
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(166, 106, 70, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid #a86a46;
+            position: relative;
+            z-index: 2;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            animation: fadeIn 1.5s ease-out;
+        }
+
+        .logo {
+            width: 70px;
+            height: 70px;
+            background: #f5e9d8;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 20px rgba(168, 106, 70, 0.3);
+            overflow: hidden;
+            border: 3px solid #a86a46;
+        }
+
+        .logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .platform-name {
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: #f5e9d8;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            position: relative;
+            padding-bottom: 8px;
+        }
+
+        .platform-name::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(to right, transparent, #f5e9d8, transparent);
+            border-radius: 50%;
+        }
+
+        .main-content {
+            padding: 30px 15px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+            max-width: 900px;
+            margin: 0 auto;
+            min-height: calc(100vh - 170px);
+        }
+
+        .platform-header {
+            margin: 30px 0;
+            text-align: center;
+            animation: fadeIn 1.2s ease-out;
+        }
+
+        .platform-title {
+            font-size: 2.8rem;
+            font-weight: 800;
+            color: #a86a46;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .platform-logo {
+            width: 200px;
+            height: 200px;
+            margin: 20px auto;
+            border-radius: 50%;
+            border: 5px solid #a86a46;
+            overflow: hidden;
+            background: #f5e9d8;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            position: relative;
+            z-index: 2;
+        }
+
+        .platform-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .info-container {
+            background: rgba(255, 248, 231, 0.85);
+            backdrop-filter: blur(5px);
+            border-radius: 15px;
+            padding: 30px;
+            border: 1px solid rgba(168, 106, 70, 0.2);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            text-align: right;
+            line-height: 1.8;
+        }
+
+        .info-item {
+            font-size: 1.8rem;
+            margin-bottom: 25px;
+            color: #3a1c00;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.5s forwards;
+            animation-delay: calc(var(--delay) * 0.1s);
+            position: relative;
+            padding-right: 25px;
+        }
+
+        .info-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .info-item::before {
+            content: "•";
+            position: absolute;
+            right: 0;
+            top: 0;
+            font-size: 2rem;
+            color: #a86a46;
+        }
+
+        .highlight {
+            color: #a86a46;
+            font-weight: 700;
+        }
+
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background: rgba(168, 106, 70, 0.15);
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 30px;
+            border: 2px dashed #a86a46;
+        }
+
+        .contact-item {
+            font-size: 1.7rem;
+            padding: 12px 20px;
+            background: rgba(255, 248, 231, 0.85);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .contact-icon {
+            color: #a86a46;
+            font-size: 2rem;
+        }
+
+        .signature {
+            text-align: left;
+            font-size: 1.9rem;
+            font-weight: 700;
+            margin-top: 30px;
+            color: #3a1c00;
+            padding-top: 20px;
+            border-top: 2px solid rgba(168, 106, 70, 0.3);
+        }
+
+        .footer {
+            background: rgba(166, 106, 70, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 20px 15px;
+            text-align: center;
+            border-top: 2px solid #a86a46;
+            position: relative;
+            z-index: 2;
+        }
+
+        .creator-info {
+            font-size: 1.2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .creator-name {
+            font-weight: 700;
+            color: #f5e9d8;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .phone-number {
+            display: block;
+            font-size: 1.1rem;
+            color: #f5e9d8;
+        }
+
+        .decoration {
+            position: absolute;
+            z-index: 0;
+            opacity: 0.15;
+        }
+
+        .atom {
+            top: 10%;
+            right: 5%;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 2px dashed #a86a46;
+            animation: rotate 40s linear infinite;
+        }
+
+        .molecule {
+            bottom: 15%;
+            left: 5%;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 2px dashed #a86a46;
+            animation: rotate 30s linear infinite reverse;
+        }
+
+        .flask {
+            top: 35%;
+            left: 10%;
+            width: 80px;
+            height: 160px;
+            border-bottom-left-radius: 50%;
+            border-bottom-right-radius: 50%;
+            border: 2px dashed #a86a46;
+            animation: float 9s ease-in-out infinite;
+        }
+
+        .book {
+            bottom: 10%;
+            right: 10%;
+            width: 100px;
+            height: 140px;
+            background: rgba(168, 106, 70, 0.1);
+            border-radius: 8px;
+            border: 2px dashed #a86a46;
+            animation: float 7s ease-in-out infinite 0.5s;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes typingEffect {
+            from { width: 0 }
+            to { width: 100% }
+        }
+
+        @keyframes blinkCaret {
+            from, to { border-color: transparent }
+            50% { border-color: #a86a46 }
+        }
+
+        /* تحسينات للهواتف - شاشات صغيرة جداً */
+        @media (max-width: 480px) {
+            .header {
+                padding: 12px 15px;
+            }
+            
+            .logo {
+                width: 60px;
+                height: 60px;
+            }
+            
+            .platform-name {
+                font-size: 1.5rem;
+                padding-bottom: 6px;
+            }
+            
+            .platform-logo {
+                width: 170px;
+                height: 170px;
+            }
+            
+            .platform-title {
+                font-size: 2.2rem;
+            }
+            
+            .info-item {
+                font-size: 1.5rem;
+            }
+            
+            .contact-item {
+                font-size: 1.4rem;
+            }
+            
+            .creator-info {
+                font-size: 1.1rem;
+            }
+            
+            .phone-number {
+                font-size: 1rem;
+            }
+            
+            .atom, .molecule, .flask, .book {
+                display: none;
+            }
+        }
+
+        /* تحسينات للأجهزة اللوحية */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .platform-logo {
+                width: 250px;
+                height: 250px;
+            }
+            
+            .platform-title {
+                font-size: 3rem;
+            }
+            
+            .info-item {
+                font-size: 2rem;
+            }
+        }
+        
+        /* تحسينات لشاشات كبيرة */
+        @media (min-width: 1025px) {
+            .platform-logo {
+                width: 280px;
+                height: 280px;
+            }
+            
+            .platform-title {
+                font-size: 3.2rem;
+            }
+            
+            .info-item {
+                font-size: 2.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo-container">
+            <div class="logo">
+                <img src="islam.jpg" alt="شعار منصة مادة العلوم">
+            </div>
+            <h1 class="platform-name">معلومات عن المنصة</h1>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="decoration atom"></div>
+        <div class="decoration molecule"></div>
+        <div class="decoration flask"></div>
+        <div class="decoration book"></div>
+        
+        <div class="platform-header">
+            <div class="platform-logo">
+                <img src="islam.jpg" alt="شعار منصة مادة العلوم">
+            </div>
+            <h2 class="platform-title">منصة مادة العلوم</h2>
+        </div>
+        
+        <div class="info-container" id="infoContainer">
+            <!-- سيتم ملء المحتوى بالبرنامج النصي -->
+        </div>
+        
+        <div class="contact-info">
+            <div class="contact-item">
+                <i class="fas fa-hand-holding-heart contact-icon"></i>
+                <span>للتعاون أو التبرع للمساهمة في إنشاء قسم ذوي الهمم: 
+                    <span class="highlight">واتساب 01122104596</span>
+                </span>
+            </div>
+            
+            <div class="contact-item">
+                <i class="fas fa-users contact-icon"></i>
+                <span>الطلاب الذين يعانون من ظروف مادية صعبة والأيتام: 
+                    <span class="highlight">واتساب 01557257390</span>
+                </span>
+            </div>
+        </div>
+        
+        <div class="signature">
+            <p>اسأل الله أن يوفقكم في مبتغاكم التعليمي وأن يتم خلق جيل يفهم العلوم لا يحفظ ويردد</p>
+            <p>تحيات: م/ إسماعيل</p>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="creator-info">
+            <span class="creator-name">م/ اسماعيل عماد</span>
+            <span class="phone-number">01122104596</span>
+            <span class="phone-number">01202326992</span>
+        </div>
+    </footer>
+
+    <audio id="typingSound" src="islam.mp3"></audio>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const infoContainer = document.getElementById('infoContainer');
+            const typingSound = document.getElementById('typingSound');
+            
+            const infoItems = [
+                "منصة مادة العلوم هي منصة متخصصة في تدريس مادة العلوم للصفوف الابتدائية والإعدادية، تركز على شرح وتلخيص الدروس بشكل ممتع بحيث تكون المنصة وكأنها فصل دراسي مغلق.",
+                "تهدف المنصة إلى علاج الكسور العلمية لدى الطالب الناتجة عن الظروف الحياتية الحالية، بحيث تجعل الطالب مؤهلاً لدخول الامتحان إن شاء الله بعد تأهيله في المادة.",
+                "تقدم المنصة شرح الدروس في فيديوهات تفصيلية مع إرفاق ملازم وملخصات مكتوبة بعناية فائقة، بالإضافة إلى قسم خاص بالامتحانات (الورقية والإلكترونية) المبرمجة خصيصاً للطالب.",
+                "نظراً لأن المنصة تهدف إلى الوصول لشتى أنحاء طلاب مادة العلوم في جمهورية مصر العربية، سنقوم لاحقاً بإضافة قسم خاص بطلابنا ذوي الهمم بإذن الله.",
+                "سيتم إنشاء هذا القسم ليصبح متخصصاً في تعليم طلابنا بطرق مبتكرة وتحقيق أقصى استفادة. وبإذن الله يتم العمل حالياً على خطة لاختيار بعناية مكان إنشاء القسم والذي سوف يكون في إحدى أراضي الجيزة أو القاهرة بإذن الله."
+            ];
+            
+            let currentItemIndex = 0;
+            let currentCharIndex = 0;
+            let isTyping = false;
+            
+            function typeNextCharacter() {
+                if (currentItemIndex >= infoItems.length) {
+                    // توقف عن الكتابة عند الانتهاء
+                    typingSound.pause();
+                    return;
+                }
+                
+                if (!isTyping) {
+                    isTyping = true;
+                    typingSound.currentTime = 0;
+                    typingSound.play();
+                }
+                
+                const currentItem = infoItems[currentItemIndex];
+                const currentText = currentItem.substring(0, currentCharIndex + 1);
+                
+                // إنشاء عنصر جديد إذا لزم الأمر
+                if (currentCharIndex === 0) {
+                    const itemElement = document.createElement('div');
+                    itemElement.className = 'info-item';
+                    itemElement.style.setProperty('--delay', currentItemIndex);
+                    infoContainer.appendChild(itemElement);
+                }
+                
+                const itemElement = infoContainer.lastChild;
+                itemElement.textContent = currentText;
+                
+                currentCharIndex++;
+                
+                // التحقق إذا انتهينا من هذا البند
+                if (currentCharIndex >= currentItem.length) {
+                    currentItemIndex++;
+                    currentCharIndex = 0;
+                    isTyping = false;
+                    typingSound.pause();
+                    
+                    // الانتقال إلى البند التالي بعد تأخير قصير
+                    setTimeout(typeNextCharacter, 500);
+                } else {
+                    // استمر في الكتابة
+                    setTimeout(typeNextCharacter, 50);
+                }
+            }
+            
+            // بدء عملية الكتابة
+            setTimeout(typeNextCharacter, 1000);
+            
+            // إيقاف الصوت عند مغادرة الصفحة
+            window.addEventListener('beforeunload', function() {
+                typingSound.pause();
+            });
+        });
+    </script>
+</body>
+</html>

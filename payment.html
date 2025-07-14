@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>دفع الاشتراك - منصة مادة العلوم</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Noto Naskh Arabic', serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f0e6d2, #e2cda8, #d4b98a);
+            background-attachment: fixed;
+            color: #333;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+            font-size: 15px;
+        }
+
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23a86a46' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+            opacity: 0.15;
+            z-index: 0;
+        }
+
+        .header {
+            padding: 12px 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(166, 106, 70, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid #a86a46;
+            position: relative;
+            z-index: 2;
+            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo {
+            width: 55px;
+            height: 55px;
+            background: #f5e9d8;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 15px rgba(168, 106, 70, 0.3);
+            overflow: hidden;
+            border: 2px solid #a86a46;
+        }
+
+        .logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .platform-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            color: #f5e9d8;
+            text-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
+            position: relative;
+            padding-bottom: 5px;
+        }
+
+        .platform-name::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(to right, transparent, #f5e9d8, transparent);
+            border-radius: 50%;
+        }
+
+        .main-content {
+            padding: 25px 12px;
+            position: relative;
+            z-index: 1;
+            max-width: 700px;
+            margin: 0 auto;
+            min-height: calc(100vh - 150px);
+        }
+
+        .payment-container {
+            background: rgba(255, 248, 231, 0.85);
+            backdrop-filter: blur(5px);
+            border-radius: 12px;
+            padding: 25px;
+            border: 1px solid rgba(168, 106, 70, 0.2);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            position: relative;
+        }
+
+        .payment-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #a86a46;
+            margin-bottom: 20px;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .payment-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 50%;
+            transform: translateX(50%);
+            width: 180px;
+            height: 2px;
+            background: linear-gradient(to right, transparent, #a86a46, transparent);
+            border-radius: 50%;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: right;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 1.4rem;
+            margin-bottom: 8px;
+            color: #3a1c00;
+            font-weight: 600;
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 12px 15px;
+            font-size: 1.4rem;
+            border-radius: 10px;
+            border: 2px solid #d4b98a;
+            background: #fff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .form-select:focus {
+            outline: none;
+            border-color: #a86a46;
+            box-shadow: 0 0 0 3px rgba(168, 106, 70, 0.2);
+        }
+
+        .price-container {
+            background: rgba(168, 106, 70, 0.15);
+            border-radius: 12px;
+            padding: 15px;
+            margin: 20px 0;
+            border: 2px dashed #a86a46;
+        }
+
+        .price-label {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #3a1c00;
+        }
+
+        .price-value {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: #a86a46;
+        }
+
+        .payment-methods {
+            margin: 30px 0;
+            text-align: center;
+        }
+
+        .methods-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #3a1c00;
+            margin-bottom: 20px;
+            position: relative;
+            padding-bottom: 8px;
+        }
+
+        .methods-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 50%;
+            transform: translateX(50%);
+            width: 130px;
+            height: 2px;
+            background: linear-gradient(to right, transparent, #a86a46, transparent);
+            border-radius: 50%;
+        }
+
+        .method-cards {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        .method-card {
+            background: #fff;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            width: 240px;
+        }
+
+        .method-icon {
+            font-size: 2rem;
+            color: #a86a46;
+            margin-bottom: 10px;
+        }
+
+        .method-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #3a1c00;
+        }
+
+        .method-number {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #a86a46;
+            direction: ltr;
+            display: block;
+            margin-top: 8px;
+        }
+
+        .buttons-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 14px 25px;
+            font-size: 1.5rem;
+            font-weight: 600;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            color: #fff;
+            background: linear-gradient(45deg, #a86a46, #d4b98a);
+        }
+
+        .btn:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn i {
+            font-size: 1.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .btn:hover i {
+            transform: scale(1.15);
+        }
+
+        .why-pay-btn {
+            background: linear-gradient(45deg, #3a1c00, #5a3c1a);
+            margin-top: 15px;
+            font-size: 1.4rem;
+            padding: 12px 20px;
+        }
+
+        .payment-proof-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .payment-proof-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: #fff;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            max-width: 450px;
+            width: 90%;
+            position: relative;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+            animation: modalIn 0.4s ease;
+        }
+
+        .modal-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #a86a46;
+            margin-bottom: 20px;
+        }
+
+        .modal-message {
+            font-size: 1.5rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            color: #3a1c00;
+        }
+
+        .whatsapp-number {
+            font-size: 1.7rem;
+            font-weight: 800;
+            color: #a86a46;
+            margin: 15px 0;
+            display: block;
+        }
+
+        .countdown {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #3a1c00;
+            margin-top: 20px;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            font-size: 1.6rem;
+            color: #a86a46;
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+
+        .why-pay-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .why-pay-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .why-pay-content {
+            background: #fff;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: right;
+            max-width: 600px;
+            width: 90%;
+            position: relative;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+            animation: modalIn 0.4s ease;
+            max-height: 75vh;
+            overflow-y: auto;
+        }
+
+        .why-pay-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #a86a46;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .reason-list {
+            font-size: 1.5rem;
+            line-height: 1.7;
+            color: #3a1c00;
+            list-style-type: none;
+            padding: 0 15px;
+        }
+
+        .reason-list li {
+            margin-bottom: 15px;
+            position: relative;
+            padding-right: 20px;
+        }
+
+        .reason-list li::before {
+            content: "•";
+            position: absolute;
+            right: 0;
+            top: 0;
+            font-size: 1.8rem;
+            color: #a86a46;
+        }
+
+        .subscription-note {
+            background: rgba(168, 106, 70, 0.15);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 25px;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #3a1c00;
+            border-left: 3px solid #a86a46;
+        }
+
+        .help-float {
+            position: fixed;
+            bottom: 25px;
+            left: 25px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #a86a46;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+
+        .help-float:hover {
+            transform: scale(1.08);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+        }
+
+        .help-info {
+            position: fixed;
+            bottom: 85px;
+            left: 25px;
+            background: #fff;
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            z-index: 99;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            width: 250px;
+        }
+
+        .help-float:hover + .help-info {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .help-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #a86a46;
+            margin-bottom: 12px;
+        }
+
+        .help-number {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #3a1c00;
+            direction: ltr;
+        }
+
+        .footer {
+            background: rgba(166, 106, 70, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 15px 12px;
+            text-align: center;
+            border-top: 2px solid #a86a46;
+            position: relative;
+            z-index: 2;
+        }
+
+        .creator-info {
+            font-size: 1.1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .creator-name {
+            font-weight: 700;
+            color: #f5e9d8;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        }
+
+        .phone-number {
+            display: block;
+            font-size: 1rem;
+            color: #f5e9d8;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0); }
+        }
+
+        @keyframes modalIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes countdown {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.08); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo-container">
+            <div class="logo">
+                <img src="islam.jpg" alt="شعار منصة مادة العلوم">
+            </div>
+            <h1 class="platform-name">دفع الاشتراك</h1>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="payment-container">
+            <h2 class="payment-title">إتمام عملية الدفع</h2>
+            
+            <div class="form-group">
+                <label for="grade" class="form-label">اختر صفك الدراسي</label>
+                <select id="grade" class="form-select">
+                    <option value="">-- اختر الصف الدراسي --</option>
+                    <option value="الرابع الابتدائي">الرابع الابتدائي</option>
+                    <option value="الخامس الابتدائي">الخامس الابتدائي</option>
+                    <option value="السادس الابتدائي">السادس الابتدائي</option>
+                    <option value="الأول الإعدادي">الأول الإعدادي</option>
+                    <option value="الثاني الإعدادي">الثاني الإعدادي</option>
+                    <option value="الثالث الإعدادي">الثالث الإعدادي</option>
+                </select>
+            </div>
+            
+            <div class="price-container">
+                <div class="price-label">المبلغ المطلوب دفعه:</div>
+                <div class="price-value">--</div>
+            </div>
+            
+            <div class="payment-methods">
+                <h3 class="methods-title">طرق الدفع المتاحة</h3>
+                
+                <div class="method-cards">
+                    <div class="method-card">
+                        <i class="fas fa-mobile-alt method-icon"></i>
+                        <h4 class="method-name">اتصالات كاش</h4>
+                        <span class="method-number">01122104596</span>
+                    </div>
+                    
+                    <div class="method-card">
+                        <i class="fas fa-phone-alt method-icon"></i>
+                        <h4 class="method-name">فودافون كاش</h4>
+                        <span class="method-number">01011598392</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="buttons-container">
+                <button id="sendProofBtn" class="btn">
+                    <i class="fab fa-whatsapp"></i>
+                    ارسال اثبات الدفع
+                </button>
+                
+                <button id="paidBtn" class="btn">
+                    <i class="fas fa-check-circle"></i>
+                    أنا دفعت
+                </button>
+            </div>
+            
+            <button id="whyPayBtn" class="btn why-pay-btn">
+                <i class="fas fa-question-circle"></i>
+                لماذا ادفع نقود مقابل الاشتراك؟
+            </button>
+        </div>
+        
+        <div class="help-float">
+            <i class="fas fa-headset"></i>
+        </div>
+        <div class="help-info">
+            <h4 class="help-title">مشاكل في الدفع؟</h4>
+            <p>اتصل على الرقم:</p>
+            <p class="help-number">01108759190</p>
+        </div>
+    </main>
+
+    <div class="payment-proof-modal" id="paymentProofModal">
+        <div class="modal-content">
+            <button class="close-modal" id="closeModal">
+                <i class="fas fa-times"></i>
+            </button>
+            <h3 class="modal-title">أرسل إثبات الدفع</h3>
+            <p class="modal-message">بعد اذنك ارسل صورة الدفع علي الواتساب ده</p>
+            <span class="whatsapp-number">01202326992</span>
+            <p class="modal-message" id="whatsappMessage">
+                أنا الطالب: [اسم الطالب]
+                <br>
+                مرحلة: [المرحلة الدراسية]
+                <br>
+               
+               قد دفعت حق الاشتراك الشهري و أطلب منك التفعيل
+            </p>
+            <p class="countdown" id="countdown">سيتم التوجيه إلى واتساب خلال: <span id="timer">5</span> ثواني</p>
+        </div>
+    </div>
+    
+    <div class="why-pay-modal" id="whyPayModal">
+        <div class="why-pay-content">
+            <button class="close-modal" id="closeWhyPayModal">
+                <i class="fas fa-times"></i>
+            </button>
+            <h3 class="why-pay-title">لماذا نطلب رسوم اشتراك؟</h3>
+            
+            <ul class="reason-list">
+                <li>المنصة عمل برمجي عشان يتنفذ محتاج فلوس كتير مقسمة كالآتي:</li>
+                <li>رسوم رفع المنصة علي الانترنت</li>
+                <li>رسوم رفع الملفات (فيديوهات وملفات أخرى)</li>
+                <li>رسوم البرامج المدفوعة التي تم برمجة المنصة خلالها</li>
+                <li>رسوم التصوير (كاميرا ومعدات وغيرها)</li>
+                <li>نحن نغطي تكاليف انشاء المنصة واستمرارها لأن كل هذه الرسوم عبارة عن اشتراك شهري مكلف جداً</li>
+                <li>كما أننا نهدف إلى إنشاء قسم خاص بذوي الهمم وسيتم تخصيص جزء من الأرباح لإنشائه</li>
+            </ul>
+            
+            <div class="subscription-note">
+                ملاحظة: الاشتراك يستمر لمدة 30 يوماً من تاريخ التفعيل
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="creator-info">
+            <span class="creator-name">م/ اسماعيل عماد</span>
+            <span class="phone-number">01122104596</span>
+            <span class="phone-number">01202326992</span>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyB27lyphN9YxgB4eFwuKWi0ghjuAutpu8o",
+            authDomain: "manssa-oloom1352007.firebaseapp.com",
+            projectId: "manssa-oloom1352007",
+            storageBucket: "manssa-oloom1352007.appspot.com",
+            messagingSenderId: "191595591961",
+            appId: "1:191595591961:web:79ff9bbb52cc08cb862d88",
+            measurementId: "G-B57GFGNW3B"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // عناصر الصفحة
+        const gradeSelect = document.getElementById('grade');
+        const priceValue = document.querySelector('.price-value');
+        const sendProofBtn = document.getElementById('sendProofBtn');
+        const paidBtn = document.getElementById('paidBtn');
+        const whyPayBtn = document.getElementById('whyPayBtn');
+        const paymentProofModal = document.getElementById('paymentProofModal');
+        const whyPayModal = document.getElementById('whyPayModal');
+        const closeModal = document.getElementById('closeModal');
+        const closeWhyPayModal = document.getElementById('closeWhyPayModal');
+        const countdownTimer = document.getElementById('timer');
+        const whatsappMessage = document.getElementById('whatsappMessage');
+        const countdownElement = document.getElementById('countdown');
+
+        // تحديث السعر عند اختيار الصف
+        gradeSelect.addEventListener('change', function() {
+            const grade = this.value;
+            if (grade.includes('ابتدائي')) {
+                priceValue.textContent = '50 جنيه مصري';
+            } else if (grade.includes('الإعدادي')) {
+                priceValue.textContent = '75 جنيه مصري';
+            } else {
+                priceValue.textContent = '--';
+            }
+        });
+
+        // فتح نافذة إرسال إثبات الدفع
+        sendProofBtn.addEventListener('click', () => {
+            const grade = gradeSelect.value;
+            
+            if (!grade) {
+                alert('الرجاء اختيار الصف الدراسي أولاً');
+                return;
+            }
+            
+            // تحديث رسالة واتساب
+            const studentName = "اسم الطالب"; // سيتم جلبها من قاعدة البيانات
+            const stage = grade.includes('ابتدائي') ? 'ابتدائي' : 'اعدادي';
+            
+            whatsappMessage.innerHTML = `
+                أنا الطالب: ${studentName}
+                <br>
+                مرحلة: ${stage} (${grade})
+                <br>
+                قد دفعت حق الاشتراك الشهري و أطلب منك التفعيل
+            `;
+            
+            paymentProofModal.classList.add('active');
+            
+            // بدء العد التنازلي
+            let seconds = 5;
+            const countdownInterval = setInterval(() => {
+                seconds--;
+                countdownTimer.textContent = seconds;
+                countdownTimer.style.animation = 'countdown 0.5s';
+                
+                setTimeout(() => {
+                    countdownTimer.style.animation = '';
+                }, 500);
+                
+                if (seconds <= 0) {
+                    clearInterval(countdownInterval);
+                    
+                    // توجيه المستخدم إلى واتساب
+                    const message = encodeURIComponent(
+                        `أنا الطالب: ${studentName}\nمرحلة: ${stage} (${grade})\nقد دفعت حق الاشتراك الشهري و أطلب منك التفعيل`
+                    );
+                    window.location.href = `https://wa.me/201202326992?text=${message}`;
+                }
+            }, 1000);
+        });
+
+        // زر "أنا دفعت"
+        paidBtn.addEventListener('click', () => {
+            const grade = gradeSelect.value;
+            
+            if (!grade) {
+                alert('الرجاء اختيار الصف الدراسي أولاً');
+                return;
+            }
+            
+            // تسجيل الطالب في قاعدة البيانات
+            const studentName = "اسم الطالب"; // سيتم جلبها من قاعدة البيانات
+            const stage = grade.includes('ابتدائي') ? 'ابتدائي' : 'اعدادي';
+            const price = stage === 'ابتدائي' ? 50 : 75;
+            
+            db.collection('students').add({
+                phone: "رقم هاتف الطالب",
+                name: studentName,
+                grade: grade,
+                stage: stage,
+                price: price,
+                isActive: false,
+                paymentSent: true,
+                paymentSentAt: new Date(),
+                createdAt: new Date()
+            }).then(() => {
+                console.log("تم تسجيل الطالب ومرحلته الدراسية بنجاح");
+                window.location.href = 'login.html';
+            }).catch(error => {
+                console.error("حدث خطأ في تسجيل البيانات:", error);
+                alert('حدث خطأ أثناء التسجيل. الرجاء المحاولة مرة أخرى.');
+            });
+        });
+
+        // فتح نافذة "لماذا ادفع؟"
+        whyPayBtn.addEventListener('click', () => {
+            whyPayModal.classList.add('active');
+        });
+
+        // إغلاق النوافذ
+        closeModal.addEventListener('click', () => {
+            paymentProofModal.classList.remove('active');
+        });
+
+        closeWhyPayModal.addEventListener('click', () => {
+            whyPayModal.classList.remove('active');
+        });
+
+        // إغلاق النوافذ بالنقر خارجها
+        window.addEventListener('click', (e) => {
+            if (e.target === paymentProofModal) {
+                paymentProofModal.classList.remove('active');
+            }
+            if (e.target === whyPayModal) {
+                whyPayModal.classList.remove('active');
+            }
+        });
+
+        // جلب بيانات الطالب من قاعدة البيانات (سيكون هذا في الواقع من جلسة المستخدم)
+        // هذا مثال فقط، في التطبيق الفعلي سيتم جلب بيانات المستخدم المسجل
+        const fetchStudentData = () => {
+            // في التطبيق الفعلي:
+            // const studentPhone = "رقم هاتف الطالب";
+            // db.collection('students').where('phone', '==', studentPhone).get()...
+            
+            // بيانات تجريبية
+            return {
+                name: "محمد أحمد",
+                grade: "الرابع الابتدائي"
+            };
+        };
+
+        // تهيئة الصفحة ببيانات الطالب
+        const initPage = () => {
+            const studentData = fetchStudentData();
+            // هنا يمكن تحديث واجهة المستخدم ببيانات الطالب
+        };
+
+        // تهيئة الصفحة عند التحميل
+        window.addEventListener('DOMContentLoaded', initPage);
+    </script>
+</body>
+</html>
