@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل الدخول - منصة مادة العلوم</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Noto Naskh Arabic', serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f0e6d2, #e2cda8, #d4b98a);
+            background-attachment: fixed;
+            color: #333;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23a86a46' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+            opacity: 0.15;
+            z-index: 0;
+        }
+
+        .header {
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(166, 106, 70, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid #a86a46;
+            position: relative;
+            z-index: 2;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            animation: fadeIn 1.5s ease-out;
+        }
+
+        .logo {
+            width: 70px;
+            height: 70px;
+            background: #f5e9d8;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 20px rgba(168, 106, 70, 0.3);
+            overflow: hidden;
+            border: 3px solid #a86a46;
+        }
+
+        .logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .platform-name {
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: #f5e9d8;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            position: relative;
+            padding-bottom: 8px;
+        }
+
+        .platform-name::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(to right, transparent, #f5e9d8, transparent);
+            border-radius: 50%;
+        }
+
+        .main-content {
+            padding: 30px 15px;
+            position: relative;
+            z-index: 1;
+            max-width: 500px;
+            margin: 0 auto;
+            min-height: calc(100vh - 170px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .login-container {
+            background: rgba(255, 248, 231, 0.85);
+            backdrop-filter: blur(5px);
+            border-radius: 15px;
+            padding: 30px;
+            border: 1px solid rgba(168, 106, 70, 0.2);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .login-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #a86a46;
+            margin-bottom: 30px;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            position: relative;
+            padding-bottom: 15px;
+        }
+
+        .login-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 50%;
+            transform: translateX(50%);
+            width: 200px;
+            height: 3px;
+            background: linear-gradient(to right, transparent, #a86a46, transparent);
+            border-radius: 50%;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            text-align: right;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+            color: #3a1c00;
+            font-weight: 600;
+        }
+
+        .input-container {
+            position: relative;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 15px 50px 15px 15px;
+            font-size: 1.6rem;
+            border-radius: 10px;
+            border: 2px solid #d4b98a;
+            background: #fff;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #a86a46;
+            box-shadow: 0 0 0 3px rgba(168, 106, 70, 0.2);
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #a86a46;
+            font-size: 1.8rem;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            font-size: 1.4rem;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 18px;
+            font-size: 1.8rem;
+            font-weight: 700;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            background: linear-gradient(45deg, #a86a46, #d4b98a, #a86a46);
+            color: #fff;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            margin: 20px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-login:active {
+            transform: translateY(0);
+        }
+
+        .register-link {
+            text-align: center;
+            margin-top: 25px;
+            font-size: 1.6rem;
+        }
+
+        .register-link a {
+            color: #a86a46;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+
+        .status-message {
+            font-size: 1.6rem;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .status-message.error {
+            background: rgba(231, 76, 60, 0.15);
+            color: #c0392b;
+            border: 1px solid #e74c3c;
+        }
+
+        .status-message.warning {
+            background: rgba(241, 196, 15, 0.15);
+            color: #d35400;
+            border: 1px solid #f39c12;
+        }
+
+        .status-message.success {
+            background: rgba(46, 204, 113, 0.15);
+            color: #27ae60;
+            border: 1px solid #2ecc71;
+        }
+
+        .loader {
+            display: none;
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 3px solid #fff;
+            animation: spin 1s linear infinite;
+            position: absolute;
+            top: 50%;
+            right: 15px;
+            transform: translateY(-50%);
+        }
+
+        .footer {
+            background: rgba(166, 106, 70, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 20px 15px;
+            text-align: center;
+            border-top: 2px solid #a86a46;
+            position: relative;
+            z-index: 2;
+        }
+
+        .creator-info {
+            font-size: 1.2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .creator-name {
+            font-weight: 700;
+            color: #f5e9d8;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .phone-number {
+            display: block;
+            font-size: 1.1rem;
+            color: #f5e9d8;
+        }
+
+        .decoration {
+            position: absolute;
+            z-index: 0;
+            opacity: 0.15;
+        }
+
+        .atom {
+            top: 10%;
+            right: 5%;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 2px dashed #a86a46;
+            animation: rotate 40s linear infinite;
+        }
+
+        .molecule {
+            bottom: 15%;
+            left: 5%;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 2px dashed #a86a46;
+            animation: rotate 30s linear infinite reverse;
+        }
+
+        .flask {
+            top: 35%;
+            left: 10%;
+            width: 80px;
+            height: 160px;
+            border-bottom-left-radius: 50%;
+            border-bottom-right-radius: 50%;
+            border: 2px dashed #a86a46;
+            animation: float 9s ease-in-out infinite;
+        }
+
+        .book {
+            bottom: 10%;
+            right: 10%;
+            width: 100px;
+            height: 140px;
+            background: rgba(168, 106, 70, 0.1);
+            border-radius: 8px;
+            border: 2px dashed #a86a46;
+            animation: float 7s ease-in-out infinite 0.5s;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* تحسينات للهواتف - شاشات صغيرة جداً */
+        @media (max-width: 480px) {
+            .header {
+                padding: 12px 15px;
+            }
+            
+            .logo {
+                width: 60px;
+                height: 60px;
+            }
+            
+            .platform-name {
+                font-size: 1.5rem;
+                padding-bottom: 6px;
+            }
+            
+            .login-title {
+                font-size: 2rem;
+            }
+            
+            .form-label {
+                font-size: 1.6rem;
+            }
+            
+            .form-input {
+                font-size: 1.5rem;
+                padding: 12px 45px 12px 12px;
+            }
+            
+            .input-icon {
+                left: 12px;
+                font-size: 1.6rem;
+            }
+            
+            .btn-login {
+                font-size: 1.6rem;
+                padding: 15px;
+            }
+            
+            .register-link {
+                font-size: 1.5rem;
+            }
+            
+            .creator-info {
+                font-size: 1.1rem;
+            }
+            
+            .phone-number {
+                font-size: 1rem;
+            }
+            
+            .atom, .molecule, .flask, .book {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo-container">
+            <div class="logo">
+                <img src="islam.jpg" alt="شعار منصة مادة العلوم">
+            </div>
+            <h1 class="platform-name">تسجيل الدخول</h1>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="decoration atom"></div>
+        <div class="decoration molecule"></div>
+        <div class="decoration flask"></div>
+        <div class="decoration book"></div>
+        
+        <div class="login-container">
+            <h2 class="login-title">مرحباً بعودتك!</h2>
+            
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="email" class="form-label">البريد الإلكتروني</label>
+                    <div class="input-container">
+                        <input type="email" id="email" class="form-input" placeholder="ادخل بريدك الإلكتروني" required>
+                        <i class="fas fa-envelope input-icon"></i>
+                    </div>
+                    <div class="error-message" id="emailError">الرجاء إدخال بريد إلكتروني صحيح</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password" class="form-label">كلمة المرور</label>
+                    <div class="input-container">
+                        <input type="password" id="password" class="form-input" placeholder="أدخل كلمة المرور" required>
+                        <i class="fas fa-lock input-icon"></i>
+                    </div>
+                    <div class="error-message" id="passwordError">الرجاء إدخال كلمة المرور</div>
+                </div>
+                
+                <button type="submit" class="btn-login">
+                    <span id="loginText">تسجيل الدخول</span>
+                    <div class="loader" id="loader"></div>
+                </button>
+                
+                <div class="status-message" id="statusMessage"></div>
+            </form>
+            
+            <div class="register-link">
+                ليس لديك حساب؟ <a href="register.html">سجل الآن</a>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="creator-info">
+            <span class="creator-name">م/ اسماعيل عماد</span>
+            <span class="phone-number">01122104596</span>
+            <span class="phone-number">01202326992</span>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyB27lyphN9YxgB4eFwuKWi0ghjuAutpu8o",
+            authDomain: "manssa-oloom1352007.firebaseapp.com",
+            projectId: "manssa-oloom1352007",
+            storageBucket: "manssa-oloom1352007.appspot.com",
+            messagingSenderId: "191595591961",
+            appId: "1:191595591961:web:79ff9bbb52cc08cb862d88",
+            measurementId: "G-B57GFGNW3B"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // عناصر النموذج
+        const form = document.getElementById('loginForm');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const emailError = document.getElementById('emailError');
+        const passwordError = document.getElementById('passwordError');
+        const statusMessage = document.getElementById('statusMessage');
+        const loader = document.getElementById('loader');
+        const loginText = document.getElementById('loginText');
+
+        // تعبير منتظم للتحقق من صحة البريد الإلكتروني
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        // إظهار/إخفاء مؤشر التحميل
+        function showLoader(show) {
+            loader.style.display = show ? 'block' : 'none';
+            loginText.style.visibility = show ? 'hidden' : 'visible';
+        }
+
+        // التحقق من صحة البريد الإلكتروني
+        emailInput.addEventListener('input', function() {
+            if (!emailRegex.test(this.value)) {
+                this.classList.add('invalid');
+                emailError.style.display = 'block';
+            } else {
+                this.classList.remove('invalid');
+                emailError.style.display = 'none';
+            }
+        });
+
+        // التحقق من وجود كلمة المرور
+        passwordInput.addEventListener('input', function() {
+            if (!this.value) {
+                this.classList.add('invalid');
+                passwordError.style.display = 'block';
+            } else {
+                this.classList.remove('invalid');
+                passwordError.style.display = 'none';
+            }
+        });
+
+        // إرسال النموذج
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // إعادة تعيين رسالة الحالة
+            statusMessage.style.display = 'none';
+            
+            // التحقق من صحة البيانات
+            let isValid = true;
+            
+            if (!emailRegex.test(emailInput.value)) {
+                emailInput.classList.add('invalid');
+                emailError.style.display = 'block';
+                isValid = false;
+            }
+            
+            if (!passwordInput.value) {
+                passwordInput.classList.add('invalid');
+                passwordError.style.display = 'block';
+                isValid = false;
+            }
+            
+            if (!isValid) {
+                return;
+            }
+            
+            try {
+                // إظهار مؤشر التحميل
+                showLoader(true);
+                
+                // تسجيل الدخول باستخدام Firebase Authentication
+                const userCredential = await auth.signInWithEmailAndPassword(
+                    emailInput.value,
+                    passwordInput.value
+                );
+                
+                // الحصول على بيانات المستخدم من Firestore
+                const userDoc = await db.collection('users').doc(userCredential.user.uid).get();
+                
+                if (!userDoc.exists) {
+                    throw new Error('بيانات المستخدم غير موجودة');
+                }
+                
+                const userData = userDoc.data();
+                
+                // التحقق من حالة الاشتراك
+                if (!userData.subscriptionStatus || userData.subscriptionStatus !== 'active') {
+                    statusMessage.innerHTML = 'حسابك غير مفعل بعد. <a href="payment.html" style="color: #d35400; font-weight: 600;">انقر هنا</a> لإتمام عملية الدفع وتفعيل الحساب.';
+                    statusMessage.className = 'status-message warning';
+                    statusMessage.style.display = 'block';
+                    showLoader(false);
+                    return;
+                }
+                
+                // توجيه المستخدم إلى الصفحة المناسبة
+                redirectToGradePage(userData.grade);
+                
+            } catch (error) {
+                // إخفاء مؤشر التحميل
+                showLoader(false);
+                
+                console.error('حدث خطأ أثناء تسجيل الدخول:', error);
+                
+                // تحديد رسالة الخطأ المناسبة
+                let errorMessage = 'حدث خطأ غير متوقع. الرجاء المحاولة مرة أخرى لاحقاً.';
+                
+                if (error.code === 'auth/user-not-found') {
+                    errorMessage = 'البريد الإلكتروني غير مسجل. الرجاء التسجيل أولاً.';
+                } else if (error.code === 'auth/wrong-password') {
+                    errorMessage = 'كلمة المرور غير صحيحة. الرجاء المحاولة مرة أخرى.';
+                } else if (error.code === 'auth/too-many-requests') {
+                    errorMessage = 'عدد كبير جداً من المحاولات. الرجاء المحاولة لاحقاً.';
+                }
+                
+                statusMessage.textContent = errorMessage;
+                statusMessage.className = 'status-message error';
+                statusMessage.style.display = 'block';
+            }
+        });
+
+        // دالة لتوجيه المستخدم إلى صفحة الصف المناسبة
+        function redirectToGradePage(grade) {
+            const gradePages = {
+                'الرابع الابتدائي': 'grade4.html',
+                'الخامس الابتدائي': 'grade5.html',
+                'السادس الابتدائي': 'grade6.html',
+                'الأول الإعدادي': 'prep1.html',
+                'الثاني الإعدادي': 'prep2.html',
+                'الثالث الإعدادي': 'prep3.html'
+            };
+            
+            // إضافة رسالة تحميل
+            statusMessage.textContent = 'جاري تسجيل الدخول وتوجيهك إلى صفحتك...';
+            statusMessage.className = 'status-message success';
+            statusMessage.style.display = 'block';
+            
+            // توجيه المستخدم بعد تأخير قصير
+            setTimeout(() => {
+                if (gradePages[grade]) {
+                    window.location.href = gradePages[grade];
+                } else {
+                    statusMessage.textContent = 'حدث خطأ: لم يتم تحديد الصف الدراسي. الرجاء التواصل مع الدعم.';
+                    statusMessage.className = 'status-message error';
+                }
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
