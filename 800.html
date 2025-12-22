@@ -1,0 +1,1208 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>امتحان اللغة الإنجليزية - الصف الثاني الإعدادي</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #4a6491 100%);
+            color: white;
+            padding: 25px 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+            opacity: 0.3;
+        }
+        
+        .school-name {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            position: relative;
+            z-index: 1;
+            letter-spacing: 0.5px;
+        }
+        
+        .exam-title {
+            font-size: 18px;
+            font-weight: 500;
+            opacity: 0.95;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .content {
+            padding: 25px;
+        }
+        
+        .code-section {
+            background: linear-gradient(to left, #e8f4ff, #f0f8ff);
+            padding: 25px;
+            border-radius: 15px;
+            border: 2px dashed #4a90e2;
+            margin-bottom: 25px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(74, 144, 226, 0.1);
+        }
+        
+        .code-label {
+            font-size: 16px;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-weight: 600;
+            display: block;
+        }
+        
+        .code-input-container {
+            position: relative;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+        
+        .code-input {
+            width: 100%;
+            padding: 16px;
+            font-size: 20px;
+            text-align: center;
+            letter-spacing: 3px;
+            border: 2px solid #4a90e2;
+            border-radius: 10px;
+            background: white;
+            color: #2c3e50;
+            font-weight: 600;
+            outline: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(74, 144, 226, 0.2);
+        }
+        
+        .code-input:focus {
+            border-color: #2c3e50;
+            box-shadow: 0 4px 12px rgba(44, 62, 80, 0.25);
+            transform: translateY(-2px);
+        }
+        
+        .code-input::placeholder {
+            letter-spacing: 1px;
+            color: #a0aec0;
+            font-weight: normal;
+        }
+        
+        .error-message {
+            color: #e74c3c;
+            font-size: 14px;
+            margin-top: 10px;
+            min-height: 20px;
+            font-weight: 500;
+            display: none;
+        }
+        
+        .btn {
+            background: linear-gradient(to right, #27ae60, #2ecc71);
+            color: white;
+            border: none;
+            padding: 16px 35px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
+            display: block;
+            margin: 20px auto 0;
+            min-width: 200px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(39, 174, 96, 0.4);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(to right, #3498db, #2980b9);
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+        }
+        
+        .btn-secondary:hover {
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
+        }
+        
+        .exam-section {
+            display: none;
+        }
+        
+        .exam-header {
+            background: #f8f9fa;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            border-right: 4px solid #4a90e2;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .student-code-display {
+            background: #2c3e50;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+            letter-spacing: 1px;
+        }
+        
+        .question-counter {
+            color: #2c3e50;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .question {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border: 2px solid #eef2f7;
+            transition: all 0.3s ease;
+        }
+        
+        .question:hover {
+            border-color: #d0e3ff;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .question-number {
+            display: inline-block;
+            background: #4a90e2;
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 28px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-left: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .question-text {
+            font-size: 15px;
+            color: #2c3e50;
+            font-weight: 600;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+        
+        @media (min-width: 480px) {
+            .options {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        
+        .option {
+            position: relative;
+        }
+        
+        .option input {
+            display: none;
+        }
+        
+        .option label {
+            display: block;
+            padding: 14px 20px;
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 14px;
+            color: #4a5568;
+            font-weight: 500;
+        }
+        
+        .option label:hover {
+            background: #edf2f7;
+            border-color: #cbd5e0;
+        }
+        
+        .option input:checked + label {
+            background: #e3f2fd;
+            border-color: #4a90e2;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+        
+        .option input:checked + label::before {
+            content: "✓";
+            position: absolute;
+            left: 10px;
+            color: #27ae60;
+            font-weight: bold;
+        }
+        
+        .submit-section {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #eef2f7;
+        }
+        
+        .results-section {
+            display: none;
+            padding: 25px;
+        }
+        
+        .results-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            border: 2px solid #dfe6e9;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+        }
+        
+        .results-title {
+            color: #2c3e50;
+            font-size: 22px;
+            margin-bottom: 25px;
+            font-weight: 700;
+            position: relative;
+            padding-bottom: 15px;
+        }
+        
+        .results-title::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(to right, #27ae60, #2ecc71);
+            border-radius: 3px;
+        }
+        
+        .score-circle {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            margin: 0 auto 25px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            box-shadow: 0 10px 25px rgba(39, 174, 96, 0.3);
+            position: relative;
+        }
+        
+        .score-value {
+            font-size: 42px;
+            font-weight: 800;
+            line-height: 1;
+        }
+        
+        .score-total {
+            font-size: 18px;
+            font-weight: 600;
+            opacity: 0.9;
+        }
+        
+        .score-label {
+            position: absolute;
+            bottom: -25px;
+            background: #2c3e50;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .incorrect-section {
+            margin-top: 30px;
+            text-align: right;
+        }
+        
+        .section-title {
+            color: #2c3e50;
+            font-size: 18px;
+            margin-bottom: 15px;
+            font-weight: 600;
+            text-align: center;
+        }
+        
+        .incorrect-questions {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            border: 1px solid #eef2f7;
+        }
+        
+        .incorrect-item {
+            padding: 15px;
+            margin-bottom: 15px;
+            background: #fff5f5;
+            border-radius: 8px;
+            border-right: 4px solid #e74c3c;
+        }
+        
+        .incorrect-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .incorrect-question {
+            font-size: 14px;
+            color: #2c3e50;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .answer-row {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .correct-answer {
+            color: #27ae60;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .user-answer {
+            color: #e74c3c;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .attempt-warning {
+            background: #fff8e1;
+            border: 2px solid #ffd166;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 25px;
+            text-align: center;
+            font-size: 14px;
+            color: #8d6e00;
+            font-weight: 500;
+        }
+        
+        .attempt-warning.error {
+            background: #ffeaea;
+            border-color: #ff6b6b;
+            color: #c53030;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .footer-note {
+            text-align: center;
+            margin-top: 25px;
+            padding-top: 15px;
+            border-top: 1px solid #eef2f7;
+            color: #718096;
+            font-size: 13px;
+        }
+        
+        @media (max-width: 480px) {
+            .header {
+                padding: 20px 15px;
+            }
+            
+            .school-name {
+                font-size: 18px;
+            }
+            
+            .exam-title {
+                font-size: 16px;
+            }
+            
+            .content {
+                padding: 20px 15px;
+            }
+            
+            .code-section {
+                padding: 20px;
+            }
+            
+            .code-input {
+                font-size: 18px;
+                padding: 14px;
+            }
+            
+            .results-card {
+                padding: 20px;
+            }
+            
+            .score-circle {
+                width: 120px;
+                height: 120px;
+            }
+            
+            .score-value {
+                font-size: 36px;
+            }
+            
+            .score-total {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="school-name">مدرسة الجيل الجديد الخاصة</div>
+            <div class="exam-title">امتحان اللغة الإنجليزية للصف الثاني الإعدادي</div>
+        </div>
+        
+        <div class="content">
+            <!-- قسم إدخال الكود -->
+            <div id="codeSection">
+                <div class="code-section">
+                    <div class="code-label">أدخل الكود المكون من 9 أرقام</div>
+                    <div class="code-input-container">
+                        <input type="text" id="studentCode" class="code-input" maxlength="9" 
+                               placeholder="" inputmode="numeric" autocomplete="off">
+                    </div>
+                    <div id="errorMessage" class="error-message"></div>
+                    
+                    <div class="loading" id="loadingCheck">
+                        <div class="loading-spinner"></div>
+                        <div>جاري التحقق من الكود...</div>
+                    </div>
+                    
+                    <div id="attemptWarning" class="attempt-warning" style="display: none;"></div>
+                    
+                    <button id="startExamBtn" class="btn">بدء الامتحان</button>
+                </div>
+            </div>
+            
+            <!-- قسم الامتحان -->
+            <div id="examSection" class="exam-section">
+                <div class="exam-header">
+                    <div class="student-code-display">كود الطالب: <span id="currentCode"></span></div>
+                    <div class="question-counter">أسئلة: 10</div>
+                </div>
+                
+                <form id="examForm">
+                    <!-- السؤال 1 -->
+                    <div class="question">
+                        <div class="question-number">1</div>
+                        <div class="question-text">A good invention can have a positive ________ on many people's lives.</div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q1" id="q1a" value="a">
+                                <label for="q1a">a. problem</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q1" id="q1b" value="b">
+                                <label for="q1b">b. impact</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q1" id="q1c" value="c">
+                                <label for="q1c">c. disease</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q1" id="q1d" value="d">
+                                <label for="q1d">d. accident</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- السؤال 2 -->
+                    <div class="question">
+                        <div class="question-number">2</div>
+                        <div class="question-text">Our science teacher explained the ________ of the experiment in the school lab.</div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q2" id="q2a" value="a">
+                                <label for="q2a">a. points</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q2" id="q2b" value="b">
+                                <label for="q2b">b. teams</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q2" id="q2c" value="c">
+                                <label for="q2c">c. steps</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q2" id="q2d" value="d">
+                                <label for="q2d">d. medals</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- السؤال 3 -->
+                    <div class="question">
+                        <div class="question-number">3</div>
+                        <div class="question-text">I can't understand the instructions of this machine. They are ________.</div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q3" id="q3a" value="a">
+                                <label for="q3a">a. simple</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q3" id="q3b" value="b">
+                                <label for="q3b">b. complex</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q3" id="q3c" value="c">
+                                <label for="q3c">c. clear</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q3" id="q3d" value="d">
+                                <label for="q3d">d. easy</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- السؤال 4 -->
+                    <div class="question">
+                        <div class="question-number">4</div>
+                        <div class="question-text">Many Egyptian inventors received ________ for their achievements.</div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q4" id="q4a" value="a">
+                                <label for="q4a">a. effects</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q4" id="q4b" value="b">
+                                <label for="q4b">b. skills</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q4" id="q4c" value="c">
+                                <label for="q4c">c. tasks</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q4" id="q4d" value="d">
+                                <label for="q4d">d. prizes</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- السؤال 5 -->
+                    <div class="question">
+                        <div class="question-number">5</div>
+                        <div class="question-text">Her story can ________ people not to give up.</div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q5" id="q5a" value="a">
+                                <label for="q5a">a. inspire</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q5" id="q5b" value="b">
+                                <label for="q5b">b. damage</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q5" id="q5c" value="c">
+                                <label for="q5c">c. neglect</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q5" id="q5d" value="d">
+                                <label for="q5d">d. forget</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- السؤال 6 -->
+                    <div class="question">
+                        <div class="question-number">6</div>
+                        <div class="question-text">The first step in the process of turning an idea into an invention is ________ a problem.</div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q6" id="q6a" value="a">
+                                <label for="q6a">a. testing</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q6" id="q6b" value="b">
+                                <label for="q6b">b. finding</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q6" id="q6c" value="c">
+                                <label for="q6c">c. making</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q6" id="q6d" value="d">
+                                <label for="q6d">d. solving</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- السؤال 7 -->
+                    <div class="question">
+                        <div class="question-number">7</div>
+                        <div class="question-text">Ahmed Zewail was not only a scientist but also a ________ model.</div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q7" id="q7a" value="a">
+                                <label for="q7a">a. rule</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q7" id="q7b" value="b">
+                                <label for="q7b">b. role</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q7" id="q7c" value="c">
+                                <label for="q7c">c. roll</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q7" id="q7d" value="d">
+                                <label for="q7d">d. line</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- السؤال 8 -->
+                    <div class="question">
+                        <div class="question-number">8</div>
+                        <div class="question-text">With imagination, patience, and ________, we can turn an idea into something that makes a difference.</div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q8" id="q8a" value="a">
+                                <label for="q8a">a. fear</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q8" id="q8b" value="b">
+                                <label for="q8b">b. effort</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q8" id="q8c" value="c">
+                                <label for="q8c">c. mistakes</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q8" id="q8d" value="d">
+                                <label for="q8d">d. problems</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- السؤال 9 -->
+                    <div class="question">
+                        <div class="question-number">9</div>
+                        <div class="question-text">Many inventions start with a simple ________.</div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q9" id="q9a" value="a">
+                                <label for="q9a">a. impact</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q9" id="q9b" value="b">
+                                <label for="q9b">b. thought</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q9" id="q9c" value="c">
+                                <label for="q9c">c. building</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q9" id="q9d" value="d">
+                                <label for="q9d">d. sound</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- السؤال 10 -->
+                    <div class="question">
+                        <div class="question-number">10</div>
+                        <div class="question-text">Working hard helps you ________ great success.</div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" name="q10" id="q10a" value="a">
+                                <label for="q10a">a. lose</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q10" id="q10b" value="b">
+                                <label for="q10b">b. achieve</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q10" id="q10c" value="c">
+                                <label for="q10c">c. fail</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" name="q10" id="q10d" value="d">
+                                <label for="q10d">d. miss</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="submit-section">
+                        <button type="button" id="submitExamBtn" class="btn btn-secondary">تسليم الإجابات</button>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- قسم النتائج -->
+            <div id="resultsSection" class="results-section">
+                <div class="results-card">
+                    <div class="results-title">نتيجة الامتحان</div>
+                    
+                    <div class="student-code-display" style="margin-bottom: 20px; display: inline-block;">
+                        كود الطالب: <span id="resultCode"></span>
+                    </div>
+                    
+                    <div class="score-circle">
+                        <div class="score-value" id="scoreValue">0</div>
+                        <div class="score-total">من 10</div>
+                        <div class="score-label">الدرجة</div>
+                    </div>
+                    
+                    <div id="incorrectSection" class="incorrect-section" style="display: none;">
+                        <div class="section-title">الأخطاء التي تم تصحيحها</div>
+                        <div id="incorrectQuestions" class="incorrect-questions">
+                            <!-- سيتم عرض الأسئلة الخاطئة هنا -->
+                        </div>
+                    </div>
+                    
+                    <div id="finalAttemptWarning" class="attempt-warning error" style="margin-top: 25px; display: none;">
+                        ⚠️ تم تسجيل دخولك للامتحان بنجاح. لا يمكنك استخدام نفس الكود مرة أخرى.
+                    </div>
+                    
+                    <button id="backToStartBtn" class="btn" style="margin-top: 25px;">العودة للصفحة الرئيسية</button>
+                </div>
+                
+                <div class="footer-note">
+                    جميع الحقوق محفوظة © مدرسة الجيل الجديد الخاصة
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // تعريف الإجابات الصحيحة للصف الثاني الإعدادي
+        const correctAnswers = {
+            q1: 'b',  // impact
+            q2: 'c',  // steps
+            q3: 'b',  // complex
+            q4: 'd',  // prizes
+            q5: 'a',  // inspire
+            q6: 'b',  // finding
+            q7: 'b',  // role
+            q8: 'b',  // effort
+            q9: 'b',  // thought
+            q10: 'b'  // achieve
+        };
+        
+        // تعريف نص الأسئلة للإظهار في النتائج
+        const questionsText = {
+            q1: "A good invention can have a positive ________ on many people's lives.",
+            q2: "Our science teacher explained the ________ of the experiment in the school lab.",
+            q3: "I can't understand the instructions of this machine. They are ________.",
+            q4: "Many Egyptian inventors received ________ for their achievements.",
+            q5: "Her story can ________ people not to give up.",
+            q6: "The first step in the process of turning an idea into an invention is ________ a problem.",
+            q7: "Ahmed Zewail was not only a scientist but also a ________ model.",
+            q8: "With imagination, patience, and ________, we can turn an idea into something that makes a difference.",
+            q9: "Many inventions start with a simple ________.",
+            q10: "Working hard helps you ________ great success."
+        };
+        
+        // تعريف خيارات الإجابات
+        const answerOptions = {
+            q1: { a: "problem", b: "impact", c: "disease", d: "accident" },
+            q2: { a: "points", b: "teams", c: "steps", d: "medals" },
+            q3: { a: "simple", b: "complex", c: "clear", d: "easy" },
+            q4: { a: "effects", b: "skills", c: "tasks", d: "prizes" },
+            q5: { a: "inspire", b: "damage", c: "neglect", d: "forget" },
+            q6: { a: "testing", b: "finding", c: "making", d: "solving" },
+            q7: { a: "rule", b: "role", c: "roll", d: "line" },
+            q8: { a: "fear", b: "effort", c: "mistakes", d: "problems" },
+            q9: { a: "impact", b: "thought", c: "building", d: "sound" },
+            q10: { a: "lose", b: "achieve", c: "fail", d: "miss" }
+        };
+        
+        // تهيئة التخزين المحلي - مفتاح فريد للصف الثاني الإعدادي
+        const storageKey = "newGenerationSchoolExam_grade2_v1";
+        let examData = JSON.parse(localStorage.getItem(storageKey)) || {
+            attempts: [],
+            deviceId: null,
+            deviceAttempts: 0
+        };
+        
+        // توليد معرف فريد للجهاز
+        function generateDeviceId() {
+            if (!examData.deviceId) {
+                examData.deviceId = 'device_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                localStorage.setItem(storageKey, JSON.stringify(examData));
+            }
+            return examData.deviceId;
+        }
+        
+        // الحصول على معرف الجهاز
+        const deviceId = generateDeviceId();
+        
+        // عناصر DOM
+        const codeSection = document.getElementById('codeSection');
+        const examSection = document.getElementById('examSection');
+        const resultsSection = document.getElementById('resultsSection');
+        const studentCodeInput = document.getElementById('studentCode');
+        const startExamBtn = document.getElementById('startExamBtn');
+        const submitExamBtn = document.getElementById('submitExamBtn');
+        const backToStartBtn = document.getElementById('backToStartBtn');
+        const currentCodeDisplay = document.getElementById('currentCode');
+        const resultCodeDisplay = document.getElementById('resultCode');
+        const scoreValue = document.getElementById('scoreValue');
+        const errorMessage = document.getElementById('errorMessage');
+        const attemptWarning = document.getElementById('attemptWarning');
+        const finalAttemptWarning = document.getElementById('finalAttemptWarning');
+        const loadingCheck = document.getElementById('loadingCheck');
+        const incorrectSection = document.getElementById('incorrectSection');
+        const incorrectQuestions = document.getElementById('incorrectQuestions');
+        const examForm = document.getElementById('examForm');
+        
+        // التحقق من صحة الكود
+        function validateCode(code) {
+            const numericRegex = /^\d{9}$/;
+            return numericRegex.test(code);
+        }
+        
+        // التحقق من إمكانية الدخول بالكود
+        function canTakeExam(code) {
+            // التحقق من صحة الكود
+            if (!validateCode(code)) {
+                return { 
+                    allowed: false, 
+                    reason: "الكود يجب أن يتكون من 9 أرقام إنجليزية فقط" 
+                };
+            }
+            
+            // التحقق من أن الكود لم يُستخدم من قبل
+            const codeUsed = examData.attempts.some(attempt => attempt.code === code);
+            if (codeUsed) {
+                return { 
+                    allowed: false, 
+                    reason: "تم استخدام هذا الكود من قبل. كل كود مسموح به لمرة واحدة فقط." 
+                };
+            }
+            
+            // التحقق من محاولات الجهاز (يسمح بمرتين فقط لكل جهاز)
+            if (examData.deviceAttempts >= 2) {
+                return { 
+                    allowed: false, 
+                    reason: "تم استخدام هذا الجهاز للدخول مرتين بالفعل. لا يمكن الدخول مرة أخرى من هذا الجهاز." 
+                };
+            }
+            
+            return { allowed: true, reason: "" };
+        }
+        
+        // تسجيل محاولة جديدة
+        function recordAttempt(code) {
+            examData.attempts.push({
+                code: code,
+                deviceId: deviceId,
+                timestamp: new Date().toISOString(),
+                completed: false
+            });
+            
+            examData.deviceAttempts = (examData.deviceAttempts || 0) + 1;
+            
+            localStorage.setItem(storageKey, JSON.stringify(examData));
+        }
+        
+        // تحديث حالة المحاولة بعد الانتهاء
+        function markAttemptAsCompleted(code) {
+            const attempt = examData.attempts.find(a => a.code === code && !a.completed);
+            if (attempt) {
+                attempt.completed = true;
+                attempt.completedAt = new Date().toISOString();
+                localStorage.setItem(storageKey, JSON.stringify(examData));
+            }
+        }
+        
+        // إظهار رسالة التحذير بناءً على محاولات الجهاز
+        function updateAttemptWarning() {
+            if (examData.deviceAttempts === 0) {
+                attemptWarning.style.display = 'none';
+            } else if (examData.deviceAttempts === 1) {
+                attemptWarning.textContent = "⚠️ هذه هي المحاولة الثانية (والأخيرة) لهذا الجهاز.";
+                attemptWarning.style.display = 'block';
+                attemptWarning.className = 'attempt-warning';
+            } else {
+                attemptWarning.textContent = "❌ تم استخدام هذا الجهاز مرتين بالفعل. لا يمكنك الدخول مرة أخرى.";
+                attemptWarning.style.display = 'block';
+                attemptWarning.className = 'attempt-warning error';
+            }
+        }
+        
+        // تحديث رسالة التحذير النهائية
+        function updateFinalWarning() {
+            if (examData.deviceAttempts >= 2) {
+                finalAttemptWarning.style.display = 'block';
+                finalAttemptWarning.textContent = 
+                    "❌ تم استخدام هذا الجهاز مرتين بالفعل. لا يمكنك الدخول إلى أي امتحان آخر من هذا الجهاز.";
+            } else {
+                finalAttemptWarning.style.display = 'block';
+            }
+        }
+        
+        // بدء الامتحان
+        startExamBtn.addEventListener('click', function() {
+            const code = studentCodeInput.value.trim();
+            
+            // إعادة تعيين رسالة الخطأ
+            errorMessage.style.display = 'none';
+            attemptWarning.style.display = 'none';
+            
+            // إظهار مؤشر التحميل
+            loadingCheck.style.display = 'block';
+            startExamBtn.disabled = true;
+            
+            // محاكاة التحقق (في تطبيق حقيقي قد يكون هناك اتصال بالسيرفر)
+            setTimeout(() => {
+                loadingCheck.style.display = 'none';
+                
+                const examCheck = canTakeExam(code);
+                if (!examCheck.allowed) {
+                    errorMessage.textContent = examCheck.reason;
+                    errorMessage.style.display = 'block';
+                    startExamBtn.disabled = false;
+                    updateAttemptWarning();
+                    return;
+                }
+                
+                // تسجيل المحاولة
+                recordAttempt(code);
+                
+                // الانتقال إلى قسم الامتحان
+                codeSection.style.display = 'none';
+                examSection.style.display = 'block';
+                currentCodeDisplay.textContent = code;
+                
+                startExamBtn.disabled = false;
+            }, 800);
+        });
+        
+        // السماح بالدخول بالضغط على Enter
+        studentCodeInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                startExamBtn.click();
+            }
+        });
+        
+        // منع إدخال غير الأرقام
+        studentCodeInput.addEventListener('input', function() {
+            this.value = this.value.replace(/[^\d]/g, '');
+            
+            // التحقق في الوقت الحقيقي
+            if (this.value.length === 9) {
+                const examCheck = canTakeExam(this.value);
+                if (!examCheck.allowed && examCheck.reason.includes("تم استخدام")) {
+                    errorMessage.textContent = examCheck.reason;
+                    errorMessage.style.display = 'block';
+                    startExamBtn.disabled = true;
+                } else {
+                    errorMessage.style.display = 'none';
+                    startExamBtn.disabled = false;
+                }
+                updateAttemptWarning();
+            } else {
+                errorMessage.style.display = 'none';
+                startExamBtn.disabled = this.value.length !== 9;
+            }
+        });
+        
+        // تسليم الإجابات
+        submitExamBtn.addEventListener('click', function() {
+            // جمع الإجابات
+            const userAnswers = {};
+            let allAnswered = true;
+            
+            for (let i = 1; i <= 10; i++) {
+                const questionName = `q${i}`;
+                const selectedOption = document.querySelector(`input[name="${questionName}"]:checked`);
+                
+                if (selectedOption) {
+                    userAnswers[questionName] = selectedOption.value;
+                } else {
+                    allAnswered = false;
+                    // تسليط الضوء على السؤال غير المجاب
+                    const questionDiv = document.querySelector(`input[name="${questionName}"]`).closest('.question');
+                    questionDiv.style.borderColor = '#e74c3c';
+                    questionDiv.style.boxShadow = '0 0 0 2px rgba(231, 76, 60, 0.2)';
+                    
+                    // إزالة التأثير بعد 2 ثانية
+                    setTimeout(() => {
+                        questionDiv.style.borderColor = '';
+                        questionDiv.style.boxShadow = '';
+                    }, 2000);
+                }
+            }
+            
+            if (!allAnswered) {
+                alert("يرجى الإجابة على جميع الأسئلة قبل التسليم");
+                return;
+            }
+            
+            // تصحيح الإجابات
+            let score = 0;
+            const incorrectAnswers = [];
+            
+            for (const question in correctAnswers) {
+                if (userAnswers[question] === correctAnswers[question]) {
+                    score++;
+                } else {
+                    incorrectAnswers.push({
+                        question: question,
+                        questionText: questionsText[question],
+                        userAnswer: userAnswers[question],
+                        correctAnswer: correctAnswers[question],
+                        userAnswerText: answerOptions[question][userAnswers[question]],
+                        correctAnswerText: answerOptions[question][correctAnswers[question]]
+                    });
+                }
+            }
+            
+            // تسجيل المحاولة كمكتملة
+            const currentCode = currentCodeDisplay.textContent;
+            markAttemptAsCompleted(currentCode);
+            
+            // عرض النتائج
+            showResults(score, incorrectAnswers, currentCode);
+        });
+        
+        // عرض النتائج
+        function showResults(score, incorrectAnswers, code) {
+            examSection.style.display = 'none';
+            resultsSection.style.display = 'block';
+            
+            resultCodeDisplay.textContent = code;
+            scoreValue.textContent = score;
+            
+            // عرض الأسئلة الخاطئة إذا وجدت
+            if (incorrectAnswers.length > 0) {
+                incorrectSection.style.display = 'block';
+                let incorrectHtml = '';
+                
+                incorrectAnswers.forEach((item, index) => {
+                    incorrectHtml += `
+                        <div class="incorrect-item">
+                            <div class="incorrect-question">${index + 1}. ${item.questionText}</div>
+                            <div class="answer-row">
+                                <div>إجابتك: <span class="user-answer">${item.userAnswerText || item.userAnswer}</span></div>
+                                <div>الإجابة الصحيحة: <span class="correct-answer">${item.correctAnswerText || item.correctAnswer}</span></div>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                incorrectQuestions.innerHTML = incorrectHtml;
+            } else {
+                incorrectSection.style.display = 'none';
+            }
+            
+            // تحديث رسالة التحذير النهائية
+            updateFinalWarning();
+        }
+        
+        // العودة للصفحة الرئيسية
+        backToStartBtn.addEventListener('click', function() {
+            // إعادة تعيين النموذج
+            examForm.reset();
+            
+            // العودة إلى قسم إدخال الكود
+            resultsSection.style.display = 'none';
+            codeSection.style.display = 'block';
+            
+            // مسح حقل الكود
+            studentCodeInput.value = '';
+            studentCodeInput.focus();
+            
+            // تحديث رسالة التحذير
+            updateAttemptWarning();
+        });
+        
+        // تهيئة عند تحميل الصفحة
+        window.addEventListener('DOMContentLoaded', function() {
+            // تحديث رسالة التحذير
+            updateAttemptWarning();
+            
+            // تعطيل الزر إذا لم يتم إدخال كود
+            startExamBtn.disabled = true;
+            
+            // التركيز على حقل الكود
+            studentCodeInput.focus();
+        });
+    </script>
+</body>
+</html>
