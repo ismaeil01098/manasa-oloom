@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>جوائزي - منصة البرمجة</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background: #0f0a1f;
+            color: #fff;
+            min-height: 100vh;
+            direction: rtl;
+        }
+        .header {
+            background: #1a1330;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid #2d224a;
+            position: sticky;
+            top: 0;
+        }
+        .back-btn {
+            width: 40px;
+            height: 40px;
+            background: #0f0a1f;
+            border: 1px solid #2d224a;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #b1a4c2;
+            cursor: pointer;
+        }
+        .back-btn:hover { background: #6d4fc7; color: white; }
+        .header h1 { font-size: 20px; font-weight: 700; flex: 1; }
+        .badge-count {
+            background: #6d4fc7;
+            padding: 6px 12px;
+            border-radius: 30px;
+            font-size: 13px;
+        }
+        .content { padding: 16px; max-width: 600px; margin: 0 auto; }
+        
+        .cert-card {
+            background: linear-gradient(145deg, #1a1330, #131025);
+            border-radius: 24px;
+            padding: 20px;
+            margin-bottom: 16px;
+            border: 1px solid #2d224a;
+            transition: all 0.3s;
+        }
+        .cert-card:hover {
+            border-color: #ffd700;
+            transform: translateY(-3px);
+        }
+        .cert-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        .cert-icon {
+            width: 50px;
+            height: 50px;
+            background: #ffd700;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #0f0a1f;
+            font-size: 24px;
+        }
+        .cert-info h3 { font-size: 18px; font-weight: 700; }
+        .cert-info p { font-size: 12px; color: #b1a4c2; }
+        .cert-date {
+            font-size: 12px;
+            color: #b1a4c2;
+            margin: 8px 0;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .cert-stats {
+            display: flex;
+            gap: 16px;
+            margin: 12px 0;
+            font-size: 13px;
+        }
+        .btn-download {
+            background: #6d4fc7;
+            border: none;
+            color: white;
+            padding: 10px;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        .btn-download:hover { background: #8a6cff; }
+        .empty {
+            text-align: center;
+            padding: 60px 20px;
+            color: #b1a4c2;
+        }
+        .empty i { font-size: 60px; margin-bottom: 16px; color: #2d224a; }
+        .loading { text-align: center; padding: 40px; }
+        
+        .toast-message {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1b3b2a;
+            padding: 10px 20px;
+            border-radius: 40px;
+            font-size: 13px;
+            z-index: 2000;
+        }
+        .toast-message.error { background: #3b1f2a; }
+        
+        .offline-banner {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: #c44545;
+            color: white;
+            text-align: center;
+            padding: 8px;
+            font-size: 12px;
+            z-index: 10001;
+            transform: translateY(-100%);
+            transition: transform 0.3s;
+        }
+        .offline-banner.show { transform: translateY(0); }
+        
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <div id="offlineBanner" class="offline-banner"><i class="fas fa-wifi"></i> لا يوجد اتصال بالإنترنت</div>
+    
+    <div class="header">
+        <div class="back-btn" id="backBtn"><i class="fas fa-arrow-right"></i></div>
+        <h1><i class="fas fa-trophy"></i> جوائزي وشهاداتي</h1>
+        <div class="badge-count" id="certCount">0</div>
+    </div>
+
+    <div class="content" id="content">
+        <div id="loadingState" class="loading"><i class="fas fa-spinner fa-pulse"></i> جاري التحميل...</div>
+        <div id="actualContent" class="hidden"></div>
+    </div>
+
+    <script type="module">
+        import { 
+            auth, db, verifyUser, showToast, checkOnlineStatus, 
+            escapeHtml, formatDate, initCache, collection, query, 
+            where, getDocs, orderBy, doc, updateDoc
+        } from './app.js';
+
+        // DOM Elements
+        const backBtn = document.getElementById('backBtn');
+        const certCountSpan = document.getElementById('certCount');
+        const loadingState = document.getElementById('loadingState');
+        const actualContent = document.getElementById('actualContent');
+        const offlineBanner = document.getElementById('offlineBanner');
+
+        let currentUser = null;
+
+        /**
+         * إنشاء HTML لبطاقة الشهادة
+         */
+        function generateCertificateHTML(cert) {
+            const date = formatDate(cert.earnedAt);
+            const userName = cert.userName || currentUser?.name || 'الطالب';
+            const packageName = cert.packageName || 'الباقة';
+            const lessonsCount = cert.completedLessons || 0;
+            
+            return `
+                <div class="cert-card">
+                    <div class="cert-header">
+                        <div class="cert-icon"><i class="fas fa-award"></i></div>
+                        <div class="cert-info">
+                            <h3>🏆 شهادة إتمام</h3>
+                            <p>${escapeHtml(packageName)}</p>
+                        </div>
+                    </div>
+                    <div class="cert-date">
+                        <i class="fas fa-calendar-alt"></i> تم الإصدار: ${date}
+                    </div>
+                    <div class="cert-stats">
+                        <span><i class="fas fa-check-circle"></i> ${lessonsCount} درس مكتمل</span>
+                        <span><i class="fas fa-star"></i> ${escapeHtml(userName)}</span>
+                    </div>
+                    <button class="btn-download" data-id="${cert.id}" data-name="${escapeHtml(packageName)}" data-user="${escapeHtml(userName)}" data-date="${date}" data-count="${lessonsCount}">
+                        <i class="fas fa-download"></i> تحميل الشهادة
+                    </button>
+                </div>
+            `;
+        }
+
+        /**
+         * تحميل الشهادة كصفحة HTML
+         */
+        function downloadCertificate(certId, packageName, userName, date, lessonsCount) {
+            const certWindow = window.open('', '_blank');
+            certWindow.document.write(`
+                <!DOCTYPE html>
+                <html dir="rtl">
+                <head>
+                    <meta charset="UTF-8">
+                    <title>شهادة إتمام - ${packageName}</title>
+                    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+                    <style>
+                        body {
+                            font-family: 'Tajawal', sans-serif;
+                            background: #0f0a1f;
+                            min-height: 100vh;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            padding: 20px;
+                            margin: 0;
+                        }
+                        .certificate {
+                            max-width: 700px;
+                            background: linear-gradient(145deg, #1a1330, #131025);
+                            border: 3px solid #ffd700;
+                            border-radius: 40px;
+                            padding: 50px;
+                            text-align: center;
+                            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+                        }
+                        .certificate h1 {
+                            font-size: 42px;
+                            font-weight: 900;
+                            color: #ffd700;
+                            margin-bottom: 20px;
+                        }
+                        .certificate h2 {
+                            font-size: 28px;
+                            color: #fff;
+                            margin-bottom: 10px;
+                        }
+                        .certificate .name {
+                            font-size: 32px;
+                            font-weight: 900;
+                            color: #6d4fc7;
+                            margin: 30px 0;
+                            padding: 20px;
+                            border-top: 2px dashed #2d224a;
+                            border-bottom: 2px dashed #2d224a;
+                        }
+                        .certificate .package {
+                            font-size: 24px;
+                            color: #b49aff;
+                            margin-bottom: 15px;
+                        }
+                        .certificate .details {
+                            font-size: 16px;
+                            color: #b1a4c2;
+                            margin: 20px 0;
+                        }
+                        .certificate .date {
+                            font-size: 14px;
+                            color: #9b8ab0;
+                            margin-top: 30px;
+                        }
+                        .seal {
+                            margin-top: 30px;
+                            font-size: 50px;
+                            color: #ffd700;
+                            opacity: 0.6;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="certificate">
+                        <h1>🏆 شهادة إتمام</h1>
+                        <h2>منصة البرمجة التعليمية</h2>
+                        <div class="name">${escapeHtml(userName)}</div>
+                        <div class="package">لإكمال دورة: ${escapeHtml(packageName)}</div>
+                        <div class="details">
+                            <i class="fas fa-check-circle"></i> عدد الدروس المكتملة: ${lessonsCount} درس
+                        </div>
+                        <div class="date">تم الإصدار: ${date}</div>
+                        <div class="seal">✧ ✦ ✧</div>
+                    </div>
+                </body>
+                </html>
+            `);
+            certWindow.document.close();
+            
+            // تحديث حالة المشاهدة في قاعدة البيانات
+            updateDoc(doc(db, 'STU_certificates', certId), { viewed: true }).catch(console.warn);
+        }
+
+        /**
+         * تحميل الشهادات من Firestore
+         */
+        async function loadCertificates() {
+            if (!currentUser) return;
+            
+            try {
+                // تهيئة التخزين المؤقت (للمشاريع الكبيرة)
+                await initCache();
+                
+                const q = query(
+                    collection(db, 'STU_certificates'),
+                    where('userId', '==', currentUser.uid),
+                    orderBy('earnedAt', 'desc')
+                );
+                const snap = await getDocs(q);
+                
+                if (snap.empty) {
+                    actualContent.innerHTML = `
+                        <div class="empty">
+                            <i class="fas fa-award"></i>
+                            <h3>لا توجد شهادات بعد</h3>
+                            <p>أكمل أي دورة للحصول على شهادتك الأولى!</p>
+                        </div>
+                    `;
+                    certCountSpan.textContent = '0';
+                    return;
+                }
+                
+                certCountSpan.textContent = snap.size;
+                let html = '';
+                snap.forEach(docSnap => {
+                    const cert = { id: docSnap.id, ...docSnap.data() };
+                    html += generateCertificateHTML(cert);
+                });
+                actualContent.innerHTML = html;
+                
+                // إضافة أحداث التحميل
+                document.querySelectorAll('.btn-download').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        downloadCertificate(
+                            btn.dataset.id,
+                            btn.dataset.name,
+                            btn.dataset.user,
+                            btn.dataset.date,
+                            btn.dataset.count
+                        );
+                        showToast('جاري تحميل الشهادة...');
+                    });
+                });
+                
+            } catch (error) {
+                console.error('خطأ في تحميل الشهادات:', error);
+                actualContent.innerHTML = `
+                    <div class="empty">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <p>حدث خطأ: ${escapeHtml(error.message)}</p>
+                        <button class="btn-download" onclick="location.reload()" style="margin-top:16px; width:auto; padding:8px 20px;">
+                            <i class="fas fa-redo-alt"></i> إعادة المحاولة
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        /**
+         * تهيئة الصفحة
+         */
+        async function init() {
+            // التحقق من حالة الاتصال
+            if (!checkOnlineStatus()) {
+                showToast('لا يوجد اتصال بالإنترنت', true);
+                loadingState.classList.add('hidden');
+                actualContent.classList.remove('hidden');
+                actualContent.innerHTML = `
+                    <div class="empty">
+                        <i class="fas fa-wifi"></i>
+                        <h3>لا يوجد اتصال بالإنترنت</h3>
+                        <p>يرجى التحقق من اتصالك وإعادة المحاولة</p>
+                        <button class="btn-download" onclick="location.reload()" style="margin-top:16px; width:auto; padding:8px 20px;">
+                            <i class="fas fa-redo-alt"></i> إعادة المحاولة
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+            
+            try {
+                // التحقق من المستخدم
+                currentUser = await verifyUser();
+                
+                // إخفاء شاشة التحميل
+                loadingState.classList.add('hidden');
+                actualContent.classList.remove('hidden');
+                
+                // تحميل الشهادات
+                await loadCertificates();
+                
+            } catch (error) {
+                console.error('خطأ في التهيئة:', error);
+                loadingState.classList.add('hidden');
+                actualContent.classList.remove('hidden');
+                actualContent.innerHTML = `
+                    <div class="empty">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h3>حدث خطأ</h3>
+                        <p>${escapeHtml(error.message || 'يرجى المحاولة مرة أخرى')}</p>
+                        <button class="btn-download" onclick="location.reload()" style="margin-top:16px; width:auto; padding:8px 20px;">
+                            <i class="fas fa-redo-alt"></i> إعادة المحاولة
+                        </button>
+                    </div>
+                `;
+            }
+        }
+        
+        // ==================== الأحداث ====================
+        backBtn.addEventListener('click', () => window.location.href = 'home.html');
+        
+        // مراقبة حالة الاتصال
+        window.addEventListener('online', () => {
+            offlineBanner.classList.remove('show');
+            showToast('تم استعادة الاتصال بالإنترنت');
+            location.reload();
+        });
+        window.addEventListener('offline', () => offlineBanner.classList.add('show'));
+        
+        // بدء التطبيق
+        init();
+    </script>
+</body>
+</html>

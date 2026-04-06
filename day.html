@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>تنظيم اليوم - منصة البرمجة</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background: #f8fafc;
+            color: #0f172a;
+            min-height: 100vh;
+            direction: rtl;
+            overflow-x: hidden;
+        }
+        
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            padding: 12px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            border-bottom: 2px solid #dc2626;
+        }
+        
+        .back-btn {
+            width: 40px;
+            height: 40px;
+            background: rgba(220, 38, 38, 0.2);
+            border: 1px solid rgba(220, 38, 38, 0.5);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffd700;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+        
+        .back-btn:hover {
+            background: #dc2626;
+            color: white;
+        }
+        
+        .header-title {
+            flex: 1;
+            text-align: center;
+        }
+        
+        .header-title h1 {
+            font-size: 18px;
+            font-weight: 800;
+            color: white;
+        }
+        
+        .header-title p {
+            font-size: 10px;
+            color: #b1a4c2;
+        }
+        
+        /* Main Content */
+        .main-container {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 16px;
+            width: 100%;
+        }
+        
+        /* Selection Card */
+        .selection-card {
+            background: white;
+            border: 1px solid #eef2f6;
+            border-radius: 28px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        
+        .selection-title {
+            font-size: 18px;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 16px;
+        }
+        
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 16px;
+        }
+        
+        .option-btn {
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 20px;
+            padding: 16px;
+            font-family: 'Tajawal', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            color: #0f172a;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .option-btn:hover {
+            border-color: #dc2626;
+            background: rgba(220, 38, 38, 0.05);
+        }
+        
+        .option-btn.active {
+            border-color: #dc2626;
+            background: rgba(220, 38, 38, 0.1);
+        }
+        
+        .option-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+        }
+        
+        /* Schedule Container */
+        .schedule-container {
+            display: none;
+            background: white;
+            border: 1px solid #eef2f6;
+            border-radius: 24px;
+            padding: 16px;
+            margin-top: 20px;
+            overflow-x: auto;
+        }
+        
+        .schedule-container.active {
+            display: block;
+        }
+        
+        .schedule-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+        
+        /* Class Schedule Table */
+        .class-schedule {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 600px;
+        }
+        
+        .class-schedule th {
+            background: #dc2626;
+            color: white;
+            padding: 10px 8px;
+            text-align: center;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .class-schedule td:first-child {
+            background: #1e293b;
+            color: white;
+            font-weight: 600;
+            padding: 10px 8px;
+            text-align: center;
+            position: sticky;
+            right: 0;
+            min-width: 80px;
+        }
+        
+        .class-schedule td {
+            border: 1px solid #e2e8f0;
+            padding: 8px;
+            text-align: center;
+            vertical-align: middle;
+            background: white;
+        }
+        
+        .add-subject-btn {
+            width: 100%;
+            min-height: 50px;
+            background: rgba(220, 38, 38, 0.05);
+            border: 2px dashed #e2e8f0;
+            border-radius: 12px;
+            color: #64748b;
+            font-size: 11px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            transition: all 0.2s;
+        }
+        
+        .add-subject-btn:hover {
+            border-color: #dc2626;
+            background: rgba(220, 38, 38, 0.1);
+        }
+        
+        .subject-display {
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
+            color: white;
+            padding: 8px 4px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            min-height: 50px;
+        }
+        
+        /* Lessons Schedule */
+        .lessons-schedule {
+            display: none;
+            margin-top: 20px;
+        }
+        
+        .lessons-schedule.active {
+            display: block;
+        }
+        
+        .add-lesson-form {
+            background: #fef2f2;
+            border-radius: 20px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        
+        @media (min-width: 600px) {
+            .form-row {
+                grid-template-columns: 1fr 1fr 1fr;
+            }
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .form-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #0f172a;
+        }
+        
+        .form-select,
+        .form-input {
+            padding: 10px 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            font-family: 'Tajawal', sans-serif;
+            font-size: 13px;
+            background: white;
+        }
+        
+        .submit-btn {
+            background: #dc2626;
+            color: white;
+            border: none;
+            border-radius: 40px;
+            padding: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+        
+        .submit-btn:hover {
+            background: #b91c1c;
+        }
+        
+        /* Lessons List */
+        .lessons-list {
+            margin-top: 20px;
+        }
+        
+        .lesson-item {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 12px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .lesson-subject {
+            font-weight: 700;
+            font-size: 13px;
+            color: #0f172a;
+            margin-bottom: 2px;
+        }
+        
+        .lesson-details {
+            font-size: 11px;
+            color: #64748b;
+        }
+        
+        .lesson-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .action-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+        }
+        
+        .edit-btn {
+            background: rgba(220, 38, 38, 0.1);
+            color: #dc2626;
+        }
+        
+        .edit-btn:hover {
+            background: #dc2626;
+            color: white;
+        }
+        
+        .delete-btn {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
+        
+        .delete-btn:hover {
+            background: #ef4444;
+            color: white;
+        }
+        
+        /* Modal */
+        .subject-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+        
+        .subject-modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 28px;
+            padding: 24px;
+            max-width: 380px;
+            width: 100%;
+        }
+        
+        .modal-title {
+            font-size: 18px;
+            font-weight: 700;
+            text-align: center;
+            color: #0f172a;
+            margin-bottom: 16px;
+        }
+        
+        .subjects-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin: 16px 0;
+        }
+        
+        .subject-option {
+            padding: 10px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .subject-option:hover {
+            border-color: #dc2626;
+            background: rgba(220, 38, 38, 0.05);
+        }
+        
+        .subject-option.selected {
+            border-color: #dc2626;
+            background: rgba(220, 38, 38, 0.1);
+        }
+        
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .modal-btn {
+            flex: 1;
+            padding: 10px;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+        }
+        
+        .cancel-btn {
+            background: #f1f5f9;
+            color: #475569;
+        }
+        
+        .cancel-btn:hover {
+            background: #e2e8f0;
+        }
+        
+        .save-btn {
+            background: #dc2626;
+            color: white;
+        }
+        
+        .save-btn:hover {
+            background: #b91c1c;
+        }
+        
+        /* Toast */
+        .toast-message {
+            position: fixed;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #0f172a;
+            color: white;
+            padding: 8px 18px;
+            border-radius: 40px;
+            font-size: 12px;
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .toast-message.error {
+            background: #dc2626;
+        }
+        
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 30px;
+            color: #94a3b8;
+            background: #f8fafc;
+            border-radius: 20px;
+        }
+        
+        /* Hidden */
+        .hidden {
+            display: none !important;
+        }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding: 16px;
+            font-size: 11px;
+            color: #94a3b8;
+            border-top: 1px solid #eef2f6;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="home.html" class="back-btn">
+            <i class="fas fa-arrow-right"></i>
+        </a>
+        <div class="header-title">
+            <h1>تنظيم اليوم</h1>
+            <p>جدول حصص الفصل والدروس الخاصة</p>
+        </div>
+        <div style="width: 40px;"></div>
+    </div>
+
+    <div class="main-container">
+        <!-- بطاقة الاختيار -->
+        <div class="selection-card">
+            <h2 class="selection-title">اختر نوع الجدول</h2>
+            <div class="options-grid">
+                <button class="option-btn active" id="classScheduleBtn">
+                    <div class="option-icon">🏫</div>
+                    <span>جدول حصص الفصل</span>
+                </button>
+                <button class="option-btn" id="lessonsScheduleBtn">
+                    <div class="option-icon">📚</div>
+                    <span>جدول حصص الدروس</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- جدول حصص الفصل -->
+        <div class="schedule-container active" id="classScheduleContainer">
+            <h3 class="schedule-title">جدول حصص الفصل الدراسي</h3>
+            <div style="overflow-x: auto;">
+                <table class="class-schedule" id="classScheduleTable">
+                    <thead id="classScheduleHeader"></thead>
+                    <tbody id="classScheduleBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- جدول حصص الدروس -->
+        <div class="lessons-schedule" id="lessonsScheduleContainer">
+            <div class="add-lesson-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">المادة</label>
+                        <select class="form-select" id="lessonSubject">
+                            <option value="">اختر المادة</option>
+                            <option value="لغة عربية">لغة عربية</option>
+                            <option value="لغة انجليزية">لغة انجليزية</option>
+                            <option value="رياضيات">رياضيات</option>
+                            <option value="علوم">علوم</option>
+                            <option value="دراسات اجتماعية">دراسات اجتماعية</option>
+                            <option value="دين">دين</option>
+                            <option value="نشاط">نشاط</option>
+                            <option value="العاب">العاب</option>
+                            <option value="مكتبة">مكتبة</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">اليوم</label>
+                        <select class="form-select" id="lessonDay">
+                            <option value="">اختر اليوم</option>
+                            <option value="الأحد">الأحد</option>
+                            <option value="الاثنين">الاثنين</option>
+                            <option value="الثلاثاء">الثلاثاء</option>
+                            <option value="الأربعاء">الأربعاء</option>
+                            <option value="الخميس">الخميس</option>
+                            <option value="الجمعة">الجمعة</option>
+                            <option value="السبت">السبت</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">الساعة</label>
+                        <input type="time" class="form-input" id="lessonTime">
+                    </div>
+                </div>
+                <button class="submit-btn" id="addLessonBtn">
+                    <i class="fas fa-save"></i> حفظ الميعاد
+                </button>
+            </div>
+
+            <div class="lessons-list" id="lessonsList">
+                <div class="empty-state">لا توجد مواعيد دروس محفوظة</div>
+            </div>
+        </div>
+
+        <div class="footer">
+            منصة البرمجة - تنظيم الجدول الدراسي
+        </div>
+    </div>
+
+    <!-- نافذة اختيار المادة -->
+    <div class="subject-modal" id="subjectModal">
+        <div class="modal-content">
+            <h3 class="modal-title">اختر المادة الدراسية</h3>
+            <div class="subjects-grid" id="subjectsGrid"></div>
+            <div class="modal-actions">
+                <button class="modal-btn cancel-btn" id="cancelSubject">إلغاء</button>
+                <button class="modal-btn save-btn" id="saveSubject">تأكيد</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ========== المواد الدراسية ==========
+        const subjects = [
+            { name: 'لغة عربية' }, { name: 'لغة انجليزية' }, { name: 'علوم' },
+            { name: 'دراسات اجتماعية' }, { name: 'رياضيات' }, { name: 'دين' },
+            { name: 'نشاط' }, { name: 'العاب' }, { name: 'مكتبة' }
+        ];
+        
+        // ========== الأيام والحصص ==========
+        const days = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس'];
+        const periods = 8;
+        
+        // ========== المتغيرات ==========
+        let currentScheduleType = 'class';
+        let currentCell = null;
+        let selectedSubject = null;
+        let editingLessonId = null;
+        let lessonsScheduleData = [];
+        
+        // ========== دوال مساعدة ==========
+        function showToast(message, isError = false) {
+            const existingToast = document.querySelector('.toast-message');
+            if (existingToast) existingToast.remove();
+            
+            const toast = document.createElement('div');
+            toast.className = `toast-message ${isError ? 'error' : ''}`;
+            toast.innerHTML = `<i class="fas ${isError ? 'fa-exclamation-triangle' : 'fa-check-circle'}"></i> ${message}`;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+        
+        function saveClassScheduleToLocal() {
+            const scheduleData = {};
+            document.querySelectorAll('.class-schedule td[data-day]').forEach(cell => {
+                const day = cell.dataset.day;
+                const period = cell.dataset.period;
+                const subjectDisplay = cell.querySelector('.subject-display');
+                if (subjectDisplay) {
+                    scheduleData[`${day}_${period}`] = subjectDisplay.textContent.trim();
+                }
+            });
+            localStorage.setItem('classSchedule', JSON.stringify(scheduleData));
+        }
+        
+        function loadClassScheduleFromLocal() {
+            const saved = localStorage.getItem('classSchedule');
+            if (!saved) return;
+            const scheduleData = JSON.parse(saved);
+            
+            document.querySelectorAll('.class-schedule td[data-day]').forEach(cell => {
+                const day = cell.dataset.day;
+                const period = cell.dataset.period;
+                const key = `${day}_${period}`;
+                if (scheduleData[key]) {
+                    const subjectName = scheduleData[key];
+                    const addBtn = cell.querySelector('.add-subject-btn');
+                    if (addBtn) addBtn.remove();
+                    
+                    const subjectDisplay = document.createElement('div');
+                    subjectDisplay.className = 'subject-display';
+                    subjectDisplay.textContent = subjectName;
+                    
+                    const deleteIcon = document.createElement('i');
+                    deleteIcon.className = 'fas fa-times';
+                    deleteIcon.style.fontSize = '12px';
+                    deleteIcon.style.marginLeft = '6px';
+                    deleteIcon.style.cursor = 'pointer';
+                    deleteIcon.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        removeSubjectFromCell(cell);
+                    });
+                    
+                    subjectDisplay.insertBefore(deleteIcon, subjectDisplay.firstChild);
+                    subjectDisplay.addEventListener('click', () => openSubjectModal(cell));
+                    cell.appendChild(subjectDisplay);
+                }
+            });
+        }
+        
+        function saveLessonsToLocal() {
+            localStorage.setItem('lessonsSchedule', JSON.stringify(lessonsScheduleData));
+        }
+        
+        function loadLessonsFromLocal() {
+            const saved = localStorage.getItem('lessonsSchedule');
+            if (saved) {
+                lessonsScheduleData = JSON.parse(saved);
+            }
+            renderLessonsList();
+        }
+        
+        function renderLessonsList() {
+            const container = document.getElementById('lessonsList');
+            if (!container) return;
+            
+            if (lessonsScheduleData.length === 0) {
+                container.innerHTML = '<div class="empty-state">لا توجد مواعيد دروس محفوظة</div>';
+                return;
+            }
+            
+            const dayOrder = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+            const sorted = [...lessonsScheduleData].sort((a, b) => {
+                const dayDiff = dayOrder.indexOf(a.day) - dayOrder.indexOf(b.day);
+                if (dayDiff !== 0) return dayDiff;
+                return a.time.localeCompare(b.time);
+            });
+            
+            container.innerHTML = '';
+            sorted.forEach(lesson => {
+                const item = document.createElement('div');
+                item.className = 'lesson-item';
+                item.innerHTML = `
+                    <div>
+                        <div class="lesson-subject">${escapeHtml(lesson.subject)}</div>
+                        <div class="lesson-details">${escapeHtml(lesson.day)} - ${escapeHtml(lesson.time)}</div>
+                    </div>
+                    <div class="lesson-actions">
+                        <button class="action-btn edit-btn" data-id="${lesson.id}"><i class="fas fa-edit"></i></button>
+                        <button class="action-btn delete-btn" data-id="${lesson.id}"><i class="fas fa-trash"></i></button>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+            
+            document.querySelectorAll('.edit-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const id = parseInt(e.currentTarget.dataset.id);
+                    editLesson(id);
+                });
+            });
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const id = parseInt(e.currentTarget.dataset.id);
+                    if (confirm('هل أنت متأكد من حذف هذا الميعاد؟')) deleteLesson(id);
+                });
+            });
+        }
+        
+        function addLesson() {
+            const subject = document.getElementById('lessonSubject').value;
+            const day = document.getElementById('lessonDay').value;
+            const time = document.getElementById('lessonTime').value;
+            
+            if (!subject || !day || !time) {
+                showToast('يرجى ملء جميع الحقول', true);
+                return;
+            }
+            
+            if (editingLessonId) {
+                const index = lessonsScheduleData.findIndex(l => l.id === editingLessonId);
+                if (index !== -1) {
+                    lessonsScheduleData[index] = { id: editingLessonId, subject, day, time, updatedAt: Date.now() };
+                }
+                editingLessonId = null;
+                document.getElementById('addLessonBtn').innerHTML = '<i class="fas fa-save"></i> حفظ الميعاد';
+            } else {
+                lessonsScheduleData.push({ id: Date.now(), subject, day, time, createdAt: Date.now() });
+            }
+            
+            saveLessonsToLocal();
+            renderLessonsList();
+            
+            document.getElementById('lessonSubject').value = '';
+            document.getElementById('lessonDay').value = '';
+            document.getElementById('lessonTime').value = '';
+            showToast('تم حفظ الميعاد بنجاح');
+        }
+        
+        function deleteLesson(id) {
+            lessonsScheduleData = lessonsScheduleData.filter(l => l.id !== id);
+            saveLessonsToLocal();
+            renderLessonsList();
+            showToast('تم حذف الميعاد');
+        }
+        
+        function editLesson(id) {
+            const lesson = lessonsScheduleData.find(l => l.id === id);
+            if (lesson) {
+                document.getElementById('lessonSubject').value = lesson.subject;
+                document.getElementById('lessonDay').value = lesson.day;
+                document.getElementById('lessonTime').value = lesson.time;
+                editingLessonId = id;
+                document.getElementById('addLessonBtn').innerHTML = '<i class="fas fa-edit"></i> تحديث الميعاد';
+            }
+        }
+        
+        function initClassSchedule() {
+            // إنشاء رأس الجدول
+            const thead = document.getElementById('classScheduleHeader');
+            if (thead) {
+                let headerHtml = '<tr><th>اليوم/الحصة</th>';
+                for (let i = 1; i <= periods; i++) {
+                    headerHtml += `<th>الحصة ${i}</th>`;
+                }
+                headerHtml += '</tr>';
+                thead.innerHTML = headerHtml;
+            }
+            
+            // إنشاء جسم الجدول
+            const tbody = document.getElementById('classScheduleBody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            
+            for (let dayIndex = 0; dayIndex < days.length; dayIndex++) {
+                const row = document.createElement('tr');
+                
+                // خلية اليوم
+                const dayCell = document.createElement('td');
+                dayCell.className = 'day-cell';
+                dayCell.textContent = days[dayIndex];
+                row.appendChild(dayCell);
+                
+                // خلايا الحصص
+                for (let period = 1; period <= periods; period++) {
+                    const cell = document.createElement('td');
+                    cell.dataset.day = days[dayIndex];
+                    cell.dataset.period = period;
+                    
+                    const addBtn = document.createElement('button');
+                    addBtn.className = 'add-subject-btn';
+                    addBtn.innerHTML = '<i class="fas fa-plus" style="font-size: 12px;"></i> إضافة';
+                    addBtn.addEventListener('click', () => openSubjectModal(cell));
+                    
+                    cell.appendChild(addBtn);
+                    row.appendChild(cell);
+                }
+                tbody.appendChild(row);
+            }
+        }
+        
+        function openSubjectModal(cell) {
+            currentCell = cell;
+            selectedSubject = null;
+            const grid = document.getElementById('subjectsGrid');
+            if (!grid) return;
+            
+            grid.innerHTML = '';
+            subjects.forEach(subject => {
+                const option = document.createElement('div');
+                option.className = 'subject-option';
+                option.textContent = subject.name;
+                option.dataset.subject = subject.name;
+                
+                const existingSubject = cell.querySelector('.subject-display');
+                if (existingSubject && existingSubject.textContent.includes(subject.name)) {
+                    option.classList.add('selected');
+                    selectedSubject = subject.name;
+                }
+                
+                option.addEventListener('click', () => {
+                    document.querySelectorAll('.subject-option').forEach(opt => opt.classList.remove('selected'));
+                    option.classList.add('selected');
+                    selectedSubject = subject.name;
+                });
+                grid.appendChild(option);
+            });
+            
+            document.getElementById('subjectModal').classList.add('active');
+        }
+        
+        function saveSubjectToSchedule() {
+            if (!selectedSubject || !currentCell) {
+                showToast('يرجى اختيار مادة أولاً', true);
+                return;
+            }
+            
+            const addBtn = currentCell.querySelector('.add-subject-btn');
+            if (addBtn) addBtn.remove();
+            
+            const subjectDisplay = document.createElement('div');
+            subjectDisplay.className = 'subject-display';
+            subjectDisplay.textContent = selectedSubject;
+            subjectDisplay.title = 'اضغط للتعديل';
+            
+            const deleteIcon = document.createElement('i');
+            deleteIcon.className = 'fas fa-times';
+            deleteIcon.style.fontSize = '12px';
+            deleteIcon.style.marginLeft = '6px';
+            deleteIcon.style.cursor = 'pointer';
+            deleteIcon.addEventListener('click', (e) => {
+                e.stopPropagation();
+                removeSubjectFromCell(currentCell);
+            });
+            
+            subjectDisplay.insertBefore(deleteIcon, subjectDisplay.firstChild);
+            subjectDisplay.addEventListener('click', () => openSubjectModal(currentCell));
+            currentCell.appendChild(subjectDisplay);
+            
+            saveClassScheduleToLocal();
+            showToast('تم حفظ المادة بنجاح');
+            document.getElementById('subjectModal').classList.remove('active');
+        }
+        
+        function removeSubjectFromCell(cell) {
+            const subjectDisplay = cell.querySelector('.subject-display');
+            if (subjectDisplay) {
+                subjectDisplay.remove();
+                const addBtn = document.createElement('button');
+                addBtn.className = 'add-subject-btn';
+                addBtn.innerHTML = '<i class="fas fa-plus" style="font-size: 12px;"></i> إضافة';
+                addBtn.addEventListener('click', () => openSubjectModal(cell));
+                cell.appendChild(addBtn);
+                saveClassScheduleToLocal();
+                showToast('تم حذف المادة');
+            }
+        }
+        
+        function switchSchedule(type) {
+            currentScheduleType = type;
+            const classBtn = document.getElementById('classScheduleBtn');
+            const lessonsBtn = document.getElementById('lessonsScheduleBtn');
+            const classContainer = document.getElementById('classScheduleContainer');
+            const lessonsContainer = document.getElementById('lessonsScheduleContainer');
+            
+            if (classBtn) classBtn.classList.toggle('active', type === 'class');
+            if (lessonsBtn) lessonsBtn.classList.toggle('active', type === 'lessons');
+            if (classContainer) classContainer.classList.toggle('active', type === 'class');
+            if (lessonsContainer) lessonsContainer.classList.toggle('active', type === 'lessons');
+        }
+        
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str).replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
+        }
+        
+        // ========== تهيئة الصفحة ==========
+        document.addEventListener('DOMContentLoaded', function() {
+            // تهيئة الجدول
+            initClassSchedule();
+            loadClassScheduleFromLocal();
+            loadLessonsFromLocal();
+            
+            // أحداث الأزرار
+            document.getElementById('classScheduleBtn')?.addEventListener('click', () => switchSchedule('class'));
+            document.getElementById('lessonsScheduleBtn')?.addEventListener('click', () => switchSchedule('lessons'));
+            document.getElementById('addLessonBtn')?.addEventListener('click', addLesson);
+            
+            document.getElementById('cancelSubject')?.addEventListener('click', () => {
+                document.getElementById('subjectModal').classList.remove('active');
+            });
+            document.getElementById('saveSubject')?.addEventListener('click', saveSubjectToSchedule);
+            
+            // إغلاق المودال بالضغط خارجها
+            document.getElementById('subjectModal')?.addEventListener('click', (e) => {
+                if (e.target === document.getElementById('subjectModal')) {
+                    document.getElementById('subjectModal').classList.remove('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

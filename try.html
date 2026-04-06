@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>محرر الأكواد - منصة البرمجة</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-css.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background: linear-gradient(145deg, #0a0718 0%, #0f0a1f 100%);
+            min-height: 100vh;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            direction: rtl;
+        }
+        
+        .playground-container {
+            width: 100%;
+            max-width: 1000px;
+            margin: 0 auto;
+            height: auto;
+            min-height: calc(100dvh - 24px);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(26, 19, 48, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(109, 79, 199, 0.3);
+            border-radius: 24px;
+            padding: 10px 16px;
+            margin-bottom: 12px;
+            flex-shrink: 0;
+        }
+        .header-left { display: flex; align-items: center; gap: 12px; }
+        .back-btn {
+            width: 40px; height: 40px;
+            background: rgba(15, 10, 31, 0.8);
+            border: 1px solid #2d224a;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #b1a4c2;
+            text-decoration: none;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        .back-btn:active { transform: scale(0.95); background: #6d4fc7; color: white; }
+        .header-title h1 { font-size: 18px; font-weight: 700; color: white; }
+        .header-title p { font-size: 10px; color: #b1a4c2; }
+        .user-badge {
+            background: rgba(15, 10, 31, 0.8);
+            border: 1px solid #2d224a;
+            border-radius: 40px;
+            padding: 5px 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+        }
+        .user-badge i { color: #6d4fc7; }
+        
+        .editor-card {
+            background: rgba(26, 19, 48, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(109, 79, 199, 0.25);
+            border-radius: 28px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-height: 0;
+        }
+        
+        .language-bar {
+            display: flex;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            gap: 8px;
+            padding: 12px 16px;
+            background: rgba(15, 10, 31, 0.6);
+            border-bottom: 1px solid rgba(109, 79, 199, 0.2);
+            scrollbar-width: thin;
+            -webkit-overflow-scrolling: touch;
+        }
+        .language-bar::-webkit-scrollbar { height: 3px; }
+        .language-bar::-webkit-scrollbar-track { background: #2d224a; border-radius: 10px; }
+        .language-bar::-webkit-scrollbar-thumb { background: #6d4fc7; border-radius: 10px; }
+        
+        .lang-btn {
+            padding: 8px 20px;
+            background: transparent;
+            border: 1.5px solid #2d224a;
+            border-radius: 40px;
+            color: #b1a4c2;
+            font-family: 'Tajawal', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+            min-width: 85px;
+            justify-content: center;
+        }
+        .lang-btn:active { transform: scale(0.96); }
+        .lang-btn.active {
+            background: linear-gradient(145deg, #6d4fc7, #8a6cff);
+            color: white;
+            border-color: #6d4fc7;
+        }
+        
+        .editor-area {
+            padding: 14px;
+            background: #0f0a1f;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+        
+        .editor-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            flex-shrink: 0;
+        }
+        .editor-label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #b1a4c2;
+            font-size: 11px;
+        }
+        .unsaved-badge {
+            background: #ffb347;
+            color: #1a1330;
+            padding: 3px 10px;
+            border-radius: 30px;
+            font-size: 10px;
+            font-weight: 600;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .unsaved-badge.visible { opacity: 1; }
+        
+        .editor-wrapper {
+            background: #1e1e1e;
+            border-radius: 18px;
+            border: 1px solid #2d224a;
+            overflow: hidden;
+            transition: border-color 0.2s;
+            direction: ltr;
+            height: 220px;
+            flex-shrink: 0;
+        }
+        .editor-wrapper:focus-within { border-color: #6d4fc7; }
+        
+        .editor-scroll {
+            display: flex;
+            height: 100%;
+            background: #1e1e1e;
+            font-family: 'Fira Code', monospace;
+            font-size: 13px;
+            line-height: 1.5;
+            overflow-y: auto;
+        }
+        
+        .line-numbers {
+            width: 44px;
+            padding: 12px 0;
+            background: #252526;
+            color: #858585;
+            text-align: center;
+            border-left: 1px solid #3e3e3e;
+            user-select: none;
+            font-family: 'Fira Code', monospace;
+            font-size: 12px;
+            line-height: 1.5;
+            white-space: pre;
+        }
+        
+        .code-container {
+            flex: 1;
+            position: relative;
+            overflow: auto;
+        }
+        
+        #codeEditor {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            min-height: 100%;
+            margin: 0;
+            padding: 12px;
+            border: none;
+            outline: none;
+            background: transparent;
+            color: #d4d4d4;
+            caret-color: #6d4fc7;
+            font-family: 'Fira Code', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            resize: none;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            overflow: hidden;
+            z-index: 3;
+            direction: ltr;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .highlight-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            min-height: 100%;
+            padding: 12px;
+            background: #1e1e1e;
+            pointer-events: none;
+            font-family: 'Fira Code', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            z-index: 2;
+            direction: ltr;
+        }
+        
+        .smart-hint {
+            background: rgba(26, 19, 48, 0.7);
+            border: 1px solid #2d224a;
+            border-radius: 14px;
+            padding: 10px 14px;
+            margin-top: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+        .hint-icon {
+            width: 32px; height: 32px;
+            background: rgba(109, 79, 199, 0.2);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6d4fc7;
+            font-size: 16px;
+        }
+        .hint-content { flex: 1; color: #d0c2e6; font-size: 12px; line-height: 1.4; }
+        .hint-content strong { color: #6d4fc7; }
+        
+        .action-bar {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            padding: 12px 14px;
+            background: rgba(15, 10, 31, 0.6);
+            border-top: 1px solid rgba(109, 79, 199, 0.2);
+            flex-shrink: 0;
+        }
+        @media (max-width: 380px) {
+            .action-bar { grid-template-columns: 1fr; gap: 8px; }
+        }
+        
+        .action-btn {
+            padding: 10px;
+            border: none;
+            border-radius: 40px;
+            font-family: 'Tajawal', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.1s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .action-btn:active { transform: scale(0.97); }
+        .action-btn.run { background: linear-gradient(145deg, #6d4fc7, #8a6cff); color: white; }
+        .action-btn.save { background: #2d224a; color: white; border: 1px solid #6d4fc7; }
+        .action-btn.clear { background: rgba(196, 69, 69, 0.2); color: #ff9b9b; border: 1px solid #c44545; }
+        
+        .output-section {
+            background: rgba(26, 19, 48, 0.8);
+            border: 1px solid rgba(109, 79, 199, 0.25);
+            border-radius: 20px;
+            overflow: hidden;
+            margin-top: 12px;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-height: 160px;
+        }
+        .output-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 16px;
+            background: rgba(15, 10, 31, 0.6);
+            border-bottom: 1px solid rgba(109, 79, 199, 0.2);
+            flex-shrink: 0;
+        }
+        .output-title { display: flex; align-items: center; gap: 6px; color: #b1a4c2; font-size: 12px; }
+        .output-badge {
+            background: #2d224a;
+            color: #b49aff;
+            padding: 3px 12px;
+            border-radius: 30px;
+            font-size: 10px;
+        }
+        .output-container {
+            padding: 12px;
+            flex: 1;
+            overflow: auto;
+            min-height: 120px;
+        }
+        .output-box {
+            background: #0f0a1f;
+            border-radius: 14px;
+            padding: 12px;
+            font-family: 'Fira Code', monospace;
+            font-size: 12px;
+            line-height: 1.5;
+            border: 1px solid #2d224a;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            direction: ltr;
+        }
+        .output-box iframe {
+            width: 100%;
+            min-height: 140px;
+            border: none;
+            border-radius: 10px;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .toast-message {
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            background: #1b3b2a; border: 1px solid #2e8b57; color: #a0e6c0;
+            padding: 10px 20px; border-radius: 50px; font-size: 12px;
+            z-index: 2000; display: flex; align-items: center; gap: 8px;
+        }
+        .toast-message.error { background: #3b1f2a; border-color: #c44545; color: #ff9b9b; }
+        
+        .confirm-dialog {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(5px); display: flex; align-items: center;
+            justify-content: center; z-index: 2000;
+        }
+        .confirm-box {
+            background: #1a1330; border: 1px solid #6d4fc7;
+            border-radius: 28px; padding: 24px; max-width: 320px; width: 85%;
+            text-align: center;
+        }
+        .confirm-box h3 { font-size: 18px; margin-bottom: 8px; }
+        .confirm-box p { color: #b1a4c2; margin-bottom: 20px; font-size: 13px; }
+        .confirm-actions { display: flex; gap: 10px; }
+        .confirm-btn {
+            flex: 1; padding: 10px; border-radius: 40px; font-weight: 600;
+            cursor: pointer; border: none;
+        }
+        .confirm-btn.cancel { background: #2d224a; color: #b1a4c2; }
+        .confirm-btn.confirm { background: #6d4fc7; color: white; }
+        
+        .offline-banner {
+            position: fixed; top: 0; left: 0; right: 0;
+            background: #c44545; color: white; text-align: center;
+            padding: 8px; font-size: 12px; z-index: 10001;
+            transform: translateY(-100%); transition: transform 0.3s;
+        }
+        .offline-banner.show { transform: translateY(0); }
+        
+        .hidden { display: none !important; }
+        .footer { text-align: center; margin-top: 12px; font-size: 10px; color: #4a3b62; flex-shrink: 0; }
+        
+        code[class*="language-"], pre[class*="language-"] {
+            color: #d4d4d4 !important;
+            text-shadow: none !important;
+        }
+        .token.comment, .token.prolog, .token.doctype, .token.cdata { color: #6a9955 !important; }
+        .token.punctuation { color: #d4d4d4 !important; }
+        .token.property, .token.tag, .token.boolean, .token.number, .token.constant, .token.symbol, .token.deleted { color: #ce9178 !important; }
+        .token.selector, .token.attr-name, .token.string, .token.char, .token.builtin, .token.inserted { color: #ce9178 !important; }
+        .token.operator, .token.entity, .token.url, .language-css .token.string, .style .token.string { color: #d4d4d4 !important; }
+        .token.atrule, .token.attr-value, .token.keyword { color: #569cd6 !important; }
+        .token.function, .token.class-name { color: #dcdcaa !important; }
+    </style>
+</head>
+<body>
+    <div id="offlineBanner" class="offline-banner"><i class="fas fa-wifi"></i> لا يوجد اتصال بالإنترنت</div>
+    
+    <div class="playground-container">
+        <div class="header">
+            <div class="header-left">
+                <div class="back-btn" id="backBtn"><i class="fas fa-arrow-right"></i></div>
+                <div class="header-title">
+                    <h1>محرر الأكواد</h1>
+                    <p>درب نفسك على البرمجة</p>
+                </div>
+            </div>
+            <div class="user-badge" id="userBadge"><i class="fas fa-user"></i><span>جاري التحميل...</span></div>
+        </div>
+
+        <div class="editor-card">
+            <div class="language-bar">
+                <button class="lang-btn html active" data-lang="html"><i class="fab fa-html5"></i> HTML</button>
+                <button class="lang-btn css" data-lang="css"><i class="fab fa-css3-alt"></i> CSS</button>
+                <button class="lang-btn js" data-lang="js"><i class="fab fa-js"></i> JavaScript</button>
+            </div>
+
+            <div class="editor-area">
+                <div class="editor-header">
+                    <div class="editor-label"><i class="fas fa-code"></i><span id="currentLangLabel">HTML</span></div>
+                    <div class="unsaved-badge" id="unsavedBadge">غير محفوظ</div>
+                </div>
+
+                <div class="editor-wrapper">
+                    <div class="editor-scroll" id="scrollContainer">
+                        <div class="line-numbers" id="lineNumbers">1</div>
+                        <div class="code-container">
+                            <textarea id="codeEditor" spellcheck="false" autocapitalize="none" autocorrect="off" autocomplete="off" dir="ltr" placeholder="// اكتب كودك هنا..."></textarea>
+                            <div class="highlight-layer"><code id="highlightContent" class="language-html"></code></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="smart-hint" id="smartHint">
+                    <div class="hint-icon"><i class="fas fa-robot"></i></div>
+                    <div class="hint-content" id="hintContent"><strong>👋 مرحباً!</strong> اكتب كوداً لتبدأ التعلم</div>
+                </div>
+            </div>
+
+            <div class="action-bar">
+                <button class="action-btn run" id="runBtn"><i class="fas fa-play"></i> تشغيل</button>
+                <button class="action-btn save" id="saveBtn"><i class="fas fa-save"></i> حفظ</button>
+                <button class="action-btn clear" id="clearBtn"><i class="fas fa-trash"></i> مسح</button>
+            </div>
+        </div>
+
+        <div class="output-section">
+            <div class="output-header">
+                <div class="output-title"><i class="fas fa-terminal"></i><span>النتيجة</span></div>
+                <div class="output-badge" id="outputBadge">HTML</div>
+            </div>
+            <div class="output-container"><div class="output-box" id="outputBox"></div></div>
+        </div>
+
+        <div class="footer">منصة البرمجة - محرر تدريبي</div>
+    </div>
+
+    <div id="confirmDialog" class="confirm-dialog hidden">
+        <div class="confirm-box">
+            <i class="fas fa-exclamation-triangle"></i>
+            <h3>لديك تغييرات غير محفوظة</h3>
+            <p id="confirmMessage">هل تريد حفظ التغييرات قبل المغادرة؟</p>
+            <div class="confirm-actions">
+                <button class="confirm-btn cancel" id="confirmCancel">إلغاء</button>
+                <button class="confirm-btn cancel" id="confirmDiscard">تجاهل</button>
+                <button class="confirm-btn confirm" id="confirmSave">حفظ</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { 
+            auth, verifyUser, showToast, checkOnlineStatus, 
+            escapeHtml, getCurrentUserSync
+        } from './app.js';
+
+        // DOM Elements
+        const userBadge = document.getElementById('userBadge');
+        const backBtn = document.getElementById('backBtn');
+        const codeEditor = document.getElementById('codeEditor');
+        const highlightContent = document.getElementById('highlightContent');
+        const scrollContainer = document.getElementById('scrollContainer');
+        const lineNumbers = document.getElementById('lineNumbers');
+        const runBtn = document.getElementById('runBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const saveBtn = document.getElementById('saveBtn');
+        const outputBox = document.getElementById('outputBox');
+        const hintContent = document.getElementById('hintContent');
+        const langBtns = document.querySelectorAll('.lang-btn');
+        const currentLangLabel = document.getElementById('currentLangLabel');
+        const outputBadge = document.getElementById('outputBadge');
+        const unsavedBadge = document.getElementById('unsavedBadge');
+        const confirmDialog = document.getElementById('confirmDialog');
+        const confirmMessage = document.getElementById('confirmMessage');
+        const confirmCancel = document.getElementById('confirmCancel');
+        const confirmDiscard = document.getElementById('confirmDiscard');
+        const confirmSave = document.getElementById('confirmSave');
+        const offlineBanner = document.getElementById('offlineBanner');
+
+        let currentUser = null;
+        let currentLang = 'html';
+        let typingTimer;
+        let hasUnsavedChanges = false;
+        let isRedirecting = false;
+
+        function updateLineNumbers() {
+            const lines = codeEditor.value.split('\n');
+            const lineCount = Math.max(1, lines.length);
+            let numbers = '';
+            for (let i = 1; i <= lineCount; i++) numbers += i + '\n';
+            lineNumbers.innerText = numbers;
+        }
+
+        function updateSyntaxHighlighting() {
+            const code = codeEditor.value || '';
+            let lang = 'markup';
+            if (currentLang === 'html') lang = 'markup';
+            else if (currentLang === 'css') lang = 'css';
+            else if (currentLang === 'js') lang = 'javascript';
+            
+            highlightContent.className = `language-${lang}`;
+            highlightContent.textContent = code;
+            if (window.Prism) {
+                Prism.highlightElement(highlightContent);
+            }
+            updateLineNumbers();
+        }
+
+        function syncScroll() {
+            const hl = document.querySelector('.highlight-layer');
+            if (hl) { hl.scrollTop = scrollContainer.scrollTop; hl.scrollLeft = scrollContainer.scrollLeft; }
+        }
+
+        function analyzeCode() {
+            const code = codeEditor.value;
+            
+            if (!code || !code.trim()) {
+                hintContent.innerHTML = '<strong>👋 مرحباً!</strong> اكتب كوداً لتبدأ التعلم';
+                return;
+            }
+            
+            let hasError = false;
+            let errorMsg = '';
+            
+            if (currentLang === 'js') {
+                try {
+                    new Function(code);
+                } catch (e) {
+                    hasError = true;
+                    errorMsg = e.message;
+                }
+            } else if (currentLang === 'html') {
+                try {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(code, 'text/html');
+                    const errors = doc.querySelectorAll('parsererror');
+                    if (errors.length > 0) hasError = true;
+                } catch (e) {
+                    hasError = true;
+                    errorMsg = e.message;
+                }
+            } else if (currentLang === 'css') {
+                const style = document.createElement('style');
+                try {
+                    style.textContent = code;
+                    if (!style.sheet) throw new Error('خطأ في CSS');
+                } catch (e) {
+                    hasError = true;
+                    errorMsg = e.message;
+                }
+            }
+            
+            if (hasError) {
+                hintContent.innerHTML = `<strong>❌ خطأ:</strong> ${escapeHtml(errorMsg || 'يوجد خطأ في بناء الكود')}`;
+            } else {
+                hintContent.innerHTML = '<strong>✅ رائع!</strong> الكود سليم - يمكنك تشغيله';
+            }
+        }
+
+        function runCode() {
+            const code = codeEditor.value || '';
+            outputBox.innerHTML = '';
+            
+            try {
+                if (currentLang === 'html') {
+                    const iframe = document.createElement('iframe');
+                    iframe.style.width = '100%';
+                    iframe.style.minHeight = '140px';
+                    iframe.style.border = 'none';
+                    iframe.style.borderRadius = '10px';
+                    iframe.style.background = 'white';
+                    iframe.sandbox = 'allow-scripts allow-forms allow-popups';
+                    
+                    outputBox.appendChild(iframe);
+                    const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                    iframeDoc.open();
+                    iframeDoc.write(code || '<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body></body></html>');
+                    iframeDoc.close();
+                    outputBadge.innerText = 'HTML Output';
+                }
+                else if (currentLang === 'css') {
+                    const iframe = document.createElement('iframe');
+                    iframe.style.width = '100%';
+                    iframe.style.minHeight = '140px';
+                    iframe.style.border = 'none';
+                    iframe.style.borderRadius = '10px';
+                    iframe.style.background = 'white';
+                    iframe.sandbox = 'allow-scripts allow-forms allow-popups';
+                    
+                    outputBox.appendChild(iframe);
+                    const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                    iframeDoc.open();
+                    iframeDoc.write(`
+                        <!DOCTYPE html>
+                        <html>
+                        <head><meta charset="UTF-8"><style>${code || ''}</style></head>
+                        <body style="font-family: system-ui; padding: 16px; background: #f5f5f5;">
+                            <div style="background: white; padding: 20px; border-radius: 12px;">
+                                <h1 style="color: #6d4fc7;">معاينة CSS</h1>
+                                <p>هذا النص سيتأثر بتنسيقات CSS التي كتبتها</p>
+                                <button style="padding: 8px 16px; background: #6d4fc7; color: white; border: none; border-radius: 8px;">زر تجريبي</button>
+                            </div>
+                        </body>
+                        </html>
+                    `);
+                    iframeDoc.close();
+                    outputBadge.innerText = 'CSS Preview';
+                }
+                else if (currentLang === 'js') {
+                    const htmlContent = `
+                        <!DOCTYPE html>
+                        <html>
+                        <head><meta charset="UTF-8"><style>body{background:#1e1e1e;color:#d4d4d4;font-family:monospace;padding:16px;margin:0}#output{font-family:'Fira Code',monospace;font-size:13px;}</style></head>
+                        <body><div id="output"></div>
+                        <script>
+                            const output = document.getElementById('output');
+                            const originalLog = console.log;
+                            console.log = function(...args) {
+                                const line = document.createElement('div');
+                                line.textContent = args.map(a => typeof a === 'object' ? JSON.stringify(a) : String(a)).join(' ');
+                                output.appendChild(line);
+                                originalLog.apply(console, args);
+                            };
+                            try { ${code} } catch(e) { 
+                                const err = document.createElement('div');
+                                err.style.color = '#ff9b9b';
+                                err.textContent = '❌ ' + e.message;
+                                output.appendChild(err);
+                            }
+                        <\/script></body></html>
+                    `;
+                    const blob = new Blob([htmlContent], { type: 'text/html' });
+                    const url = URL.createObjectURL(blob);
+                    const iframe = document.createElement('iframe');
+                    iframe.style.width = '100%';
+                    iframe.style.minHeight = '140px';
+                    iframe.style.border = 'none';
+                    iframe.style.borderRadius = '10px';
+                    iframe.style.background = '#1e1e1e';
+                    iframe.src = url;
+                    iframe.sandbox = 'allow-same-origin allow-scripts allow-forms allow-popups';
+                    outputBox.appendChild(iframe);
+                    iframe.onload = () => URL.revokeObjectURL(url);
+                    outputBadge.innerText = 'JavaScript Console';
+                }
+                showToast('✅ تم تشغيل الكود');
+            } catch(e) {
+                outputBox.innerHTML = `<div style="color: #ff9b9b; padding: 8px;">❌ خطأ: ${e.message}</div>`;
+                showToast('❌ حدث خطأ في تشغيل الكود', true);
+            }
+        }
+
+        function saveCodeLocally() {
+            if (!currentUser) return;
+            const key = `code_${currentUser.uid}_${currentLang}`;
+            localStorage.setItem(key, codeEditor.value || '');
+            hasUnsavedChanges = false;
+            unsavedBadge.classList.remove('visible');
+            showToast('✅ تم حفظ الكود محلياً');
+        }
+
+        function loadCodeLocally() {
+            if (!currentUser) return;
+            const key = `code_${currentUser.uid}_${currentLang}`;
+            const saved = localStorage.getItem(key);
+            if (saved) {
+                codeEditor.value = saved;
+                hasUnsavedChanges = false;
+                unsavedBadge.classList.remove('visible');
+            } else {
+                codeEditor.value = '';
+            }
+            updateSyntaxHighlighting();
+            analyzeCode();
+        }
+
+        function clearCode() {
+            if (codeEditor.value && codeEditor.value.trim()) {
+                if (confirm('هل أنت متأكد من مسح كل الكود؟')) {
+                    codeEditor.value = '';
+                    hasUnsavedChanges = true;
+                    unsavedBadge.classList.add('visible');
+                    updateSyntaxHighlighting();
+                    analyzeCode();
+                    outputBox.innerHTML = '';
+                    saveCodeLocally();
+                    showToast('✅ تم مسح الكود');
+                }
+            }
+        }
+
+        function showConfirm(message, onConfirm, onCancel) {
+            confirmMessage.textContent = message;
+            confirmDialog.classList.remove('hidden');
+            const handleConfirm = () => { confirmDialog.classList.add('hidden'); cleanup(); if(onConfirm) onConfirm(); };
+            const handleDiscard = () => { confirmDialog.classList.add('hidden'); cleanup(); if(onCancel) onCancel(); };
+            const handleCancel = () => { confirmDialog.classList.add('hidden'); cleanup(); };
+            const cleanup = () => {
+                confirmSave.removeEventListener('click', handleConfirm);
+                confirmDiscard.removeEventListener('click', handleDiscard);
+                confirmCancel.removeEventListener('click', handleCancel);
+            };
+            confirmSave.addEventListener('click', handleConfirm);
+            confirmDiscard.addEventListener('click', handleDiscard);
+            confirmCancel.addEventListener('click', handleCancel);
+        }
+
+        async function switchLanguage(lang) {
+            if (hasUnsavedChanges) {
+                showConfirm('لديك تغييرات غير محفوظة. هل تريد الحفظ قبل التبديل?', 
+                    () => { saveCodeLocally(); performSwitch(lang); },
+                    () => { performSwitch(lang); }
+                );
+            } else {
+                performSwitch(lang);
+            }
+        }
+        
+        function performSwitch(lang) {
+            currentLang = lang;
+            langBtns.forEach(btn => btn.classList.toggle('active', btn.dataset.lang === lang));
+            const langNames = { html: 'HTML', css: 'CSS', js: 'JavaScript' };
+            currentLangLabel.innerText = langNames[lang];
+            outputBadge.innerText = langNames[lang];
+            loadCodeLocally();
+        }
+
+        function goHome() {
+            if (hasUnsavedChanges && !isRedirecting) {
+                showConfirm('لديك كود غير محفوظ. هل تريد الحفظ قبل المغادرة?',
+                    () => { saveCodeLocally(); isRedirecting = true; window.location.href = 'home.html'; },
+                    () => { isRedirecting = true; window.location.href = 'home.html'; }
+                );
+            } else {
+                window.location.href = 'home.html';
+            }
+        }
+
+        // ==================== الأحداث ====================
+        codeEditor.addEventListener('input', () => {
+            clearTimeout(typingTimer);
+            hasUnsavedChanges = true;
+            unsavedBadge.classList.add('visible');
+            typingTimer = setTimeout(() => {
+                updateSyntaxHighlighting();
+                analyzeCode();
+            }, 200);
+        });
+        codeEditor.addEventListener('scroll', syncScroll);
+        scrollContainer.addEventListener('scroll', syncScroll);
+        
+        codeEditor.addEventListener('keydown', (e) => {
+            if (e.key === 'Tab') {
+                e.preventDefault();
+                const start = codeEditor.selectionStart;
+                const end = codeEditor.selectionEnd;
+                codeEditor.value = codeEditor.value.substring(0, start) + '    ' + codeEditor.value.substring(end);
+                codeEditor.selectionStart = codeEditor.selectionEnd = start + 4;
+                hasUnsavedChanges = true;
+                unsavedBadge.classList.add('visible');
+                updateSyntaxHighlighting();
+            }
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); runCode(); }
+            if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); saveCodeLocally(); }
+        });
+
+        langBtns.forEach(btn => btn.addEventListener('click', () => switchLanguage(btn.dataset.lang)));
+        runBtn.addEventListener('click', runCode);
+        saveBtn.addEventListener('click', saveCodeLocally);
+        clearBtn.addEventListener('click', clearCode);
+        backBtn.addEventListener('click', (e) => { e.preventDefault(); goHome(); });
+
+        window.addEventListener('beforeunload', (e) => {
+            if (hasUnsavedChanges && !isRedirecting) { e.preventDefault(); e.returnValue = ''; }
+        });
+        
+        // مراقبة حالة الاتصال
+        window.addEventListener('online', () => {
+            offlineBanner.classList.remove('show');
+            showToast('تم استعادة الاتصال بالإنترنت');
+        });
+        window.addEventListener('offline', () => offlineBanner.classList.add('show'));
+
+        // ==================== التهيئة ====================
+        async function init() {
+            // التحقق من الاتصال
+            checkOnlineStatus();
+            
+            // محاولة استرجاع المستخدم من localStorage أولاً
+            const cachedUser = getCurrentUserSync();
+            if (cachedUser) {
+                currentUser = cachedUser;
+                userBadge.innerHTML = `<i class="fas fa-user"></i><span>${escapeHtml(currentUser.name)}</span>`;
+            }
+            
+            try {
+                // التحقق الكامل من المستخدم
+                const user = await verifyUser();
+                currentUser = user;
+                userBadge.innerHTML = `<i class="fas fa-user"></i><span>${escapeHtml(user.name)}</span>`;
+                loadCodeLocally();
+            } catch (error) {
+                console.error('خطأ في التحقق من المستخدم:', error);
+                userBadge.innerHTML = `<i class="fas fa-user"></i><span>خطأ</span>`;
+                showToast('حدث خطأ في التحقق من المستخدم', true);
+            }
+        }
+        
+        init();
+    </script>
+</body>
+</html>
